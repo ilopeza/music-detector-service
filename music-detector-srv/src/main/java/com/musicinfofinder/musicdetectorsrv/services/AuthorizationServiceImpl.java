@@ -16,9 +16,9 @@ import java.net.URI;
 import java.util.Arrays;
 
 @Service
-public class LoginServiceImpl implements LoginService {
+public class AuthorizationServiceImpl implements AuthorizationService {
 
-	private final static Logger logger = LogManager.getLogger(LoginServiceImpl.class);
+	private final static Logger logger = LogManager.getLogger(AuthorizationServiceImpl.class);
 	private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
 
 	@Value("${api.spotify.client.id}")
