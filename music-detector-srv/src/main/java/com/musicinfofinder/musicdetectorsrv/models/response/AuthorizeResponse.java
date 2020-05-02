@@ -1,10 +1,24 @@
 package com.musicinfofinder.musicdetectorsrv.models.response;
 
+import org.springframework.util.StringUtils;
+
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
 public class AuthorizeResponse {
 	private String code;
 	private String state;
+	private String error;
 
 	public AuthorizeResponse() {
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
 	}
 
 	public String getCode() {
@@ -21,5 +35,13 @@ public class AuthorizeResponse {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public boolean hasError() {
+		return !isEmpty(error) && isEmpty(code);
+	}
+
+	public boolean isValidState(String state) {
+		return equalsIgnoreCase(this.state, state);
 	}
 }

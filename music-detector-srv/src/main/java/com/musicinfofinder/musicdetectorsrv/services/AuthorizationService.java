@@ -7,5 +7,9 @@ public interface AuthorizationService {
 
 	void authorize() throws AuthorizeException;
 
-	void postAuthorize(AuthorizeResponse response);
+	String postAuthorize(AuthorizeResponse response) throws AuthorizeException;
+
+	String getToken(String code);
+
+	String refreshToken();
 }

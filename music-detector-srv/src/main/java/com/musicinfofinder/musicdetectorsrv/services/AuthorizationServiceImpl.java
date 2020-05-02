@@ -92,9 +92,27 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
-	public void postAuthorize(AuthorizeResponse response) {
+	public String postAuthorize(AuthorizeResponse response) throws AuthorizeException {
+		if (response.hasError()) {
+			throw new AuthorizeException("The user has not authorized the application");
+		}
+		/**if (!response.isValidState(STATE)) {
+			throw new AuthorizeException("The state code is not recognized");
+		}**/
 		final String code = response.getCode();
 		//save the code?
 		logger.info("Response code is {}", code);
+		//retrieve token
+		return getToken(code);
+	}
+
+	@Override
+	public String getToken(String code) {
+		return null;
+	}
+
+	@Override
+	public String refreshToken() {
+		return null;
 	}
 }
