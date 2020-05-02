@@ -3,7 +3,7 @@ package com.musicinfofinder.musicdetectorsrv.services;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
 
-public interface LoginService {
+public interface AuthorizationService {
 
 	void authorize() throws AuthorizeException;
 
