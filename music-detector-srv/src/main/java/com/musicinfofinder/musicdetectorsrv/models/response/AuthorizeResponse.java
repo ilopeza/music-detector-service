@@ -1,7 +1,5 @@
 package com.musicinfofinder.musicdetectorsrv.models.response;
 
-import org.springframework.util.StringUtils;
-
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 

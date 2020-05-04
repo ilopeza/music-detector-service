@@ -2,6 +2,7 @@ package com.musicinfofinder.musicdetectorsrv.services;
 
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
+import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
 
 public interface AuthorizationService {
 
@@ -9,7 +10,7 @@ public interface AuthorizationService {
 
 	String postAuthorize(AuthorizeResponse response) throws AuthorizeException;
 
-	String getToken(String code);
+	TokenResponse getToken(String code);
 
-	String refreshToken();
+	TokenResponse refreshToken();
 }

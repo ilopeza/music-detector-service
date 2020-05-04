@@ -1,24 +1,60 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
-public abstract class AbstractRequest {
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.net.URI;
+
+public abstract class AbstractRequest implements IRequest {
 	//TODO: SHOULD ADD QUERYPARAMS TO THE ABSTRACT FATHER AND REMOVE EXTRA FUNC FROM THE CHILDREN
 	//TODO: SHOULD SUPPORT MULTIPLE PROTOCOLS
-	public static final String HTTPS_PROTOCOL = "https://";
-	private String protocol;
-	private String requestUri;
-	private String endpoint;
+	private URI uri;
+	private HttpHeaders headers;
+	private MediaType contentType;
+	private MultiValueMap<String, String> body;
+	private MultiValueMap<String, String> queryParams;
 
-	public AbstractRequest(String requestUri, String endpoint) {
-		this.requestUri = requestUri;
-		this.endpoint = endpoint;
-		this.protocol = HTTPS_PROTOCOL;
+	public AbstractRequest() {
+		this.body = new LinkedMultiValueMap<>();
+		this.queryParams = new LinkedMultiValueMap<>();
+		this.headers = new HttpHeaders();
 	}
 
-	public String getBaseUri() {
-		final StringBuilder uriBuilder = new StringBuilder()
-						.append(protocol)
-						.append(requestUri)
-						.append(endpoint);
-		return uriBuilder.toString();
+	@Override
+	public HttpHeaders getHeaders() {
+		return headers;
+	}
+
+	@Override
+	public MediaType getContentType() {
+		return contentType;
+	}
+
+	@Override
+	public final URI getUri() {
+		return this.uri;
+	}
+
+	@Override
+	public MultiValueMap<String, String> getBody() {
+		return body;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
+
+	public void setHeaders(HttpHeaders headers) {
+		this.headers = headers;
+	}
+
+	public void setContentType(MediaType contentType) {
+		this.contentType = contentType;
+	}
+
+	public void setBody(MultiValueMap<String, String> body) {
+		this.body = body;
 	}
 }
