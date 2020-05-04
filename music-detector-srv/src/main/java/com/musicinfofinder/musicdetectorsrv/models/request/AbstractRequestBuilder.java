@@ -1,33 +1,93 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
-public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF,T>, T extends AbstractRequest>
-				implements IRequestBuilder<SELF,T> {
-	private String protocol;
-	private String requestUri;
-	private String endpoint;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
+public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, T>, T extends AbstractRequest>
+				implements IRequestBuilder<SELF, T> {
+	protected MultiValueMap<String, String> body;
+	private String scheme;
+	private String host;
+	private String path;
+	private HttpHeaders headers;
+	private MediaType contentType;
+	private MultiValueMap<String, String> queryParams;
+
+	public AbstractRequestBuilder() {
+		this.body = new LinkedMultiValueMap<>();
+		this.queryParams = new LinkedMultiValueMap<>();
+		this.headers = new HttpHeaders();
+	}
 
 	@Override
-	public SELF withProtocol(String protocol) {
-		this.protocol = protocol;
+	public SELF withScheme(final String protocol) {
+		this.scheme = protocol;
 		return self();
 	}
 
 	@Override
-	public SELF withRequestUri(String requestUri) {
-		this.requestUri = requestUri;
+	public SELF withHost(final String requestUri) {
+		this.host = requestUri;
 		return self();
 	}
 
 	@Override
-	public SELF withEndpoint(String endpoint) {
-		this.endpoint = endpoint;
+	public SELF withPath(final String endpoint) {
+		this.path = endpoint;
+		return self();
+	}
+
+	public SELF withQueryParam(final String name, final String value) {
+		queryParams.set(name, value);
+		return self();
+	}
+
+	public SELF withBodyParameter(final String name, final String value) {
+		body.set(name, value);
+		return self();
+	}
+
+	public SELF withHeader(final String name, final String value) {
+		if (isEmpty(name) || isEmpty(value)) {
+			throw new IllegalArgumentException("Header with name " + name + " and value " + value + "is not valid");
+		}
+		headers.set(name, value);
+		return self();
+	}
+
+	public SELF withContentType(final MediaType mediaType) {
+		this.contentType = mediaType;
 		return self();
 	}
 
 	@Override
 	public T build() {
 		validate();
-		return internalBuild();
+		T request = internalBuild();
+		request.setUri(buildUri());
+		request.setBody(body);
+		request.setContentType(contentType);
+		request.setHeaders(headers);
+		return request;
+	}
+
+	private URI buildUri() {
+		final UriComponents uriComponents = UriComponentsBuilder.fromUriString("")
+						.scheme(scheme)
+						.host(host)
+						.path(path)
+						.queryParams(queryParams)
+						.build(true);
+		final URI uri = uriComponents.toUri();
+		return uri;
 	}
 
 	protected abstract T internalBuild();

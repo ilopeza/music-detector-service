@@ -6,10 +6,11 @@ import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuthorizeRequestTest {
 	final static String REDIRECT_URI = "https://example.com/callback";
@@ -26,15 +27,16 @@ class AuthorizeRequestTest {
 						"&scope=user-read-private%20user-read-email" +
 						"&state=34fFs29kd09";
 		final AuthorizeRequest request = AuthorizeRequestBuilder
-						.anAuthorizeRequest()
+						.requestBuilder()
 						.withClientId(CLIENT_ID)
-						.withRedirectUri(REDIRECT_URI)
 						.withResponseType(ResponseTypeEnum.CODE.getName())
+						.withRedirectUri(REDIRECT_URI)
 						.withScopes(SCOPES)
 						//.withShowDialog(false)
 						.withState(STATE)
 						.build();
-		final String authorizeUri = request.getAuthorizeUri();
+		final URI uri = request.getUri();
+		final String authorizeUri = uri.toString();
 		assertEquals(finalUri, authorizeUri);
 	}
 }

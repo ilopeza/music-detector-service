@@ -2,6 +2,7 @@ package com.musicinfofinder.musicdetectorsrv.controllers;
 
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
+import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
 import com.musicinfofinder.musicdetectorsrv.services.AuthorizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,12 +30,8 @@ public class AuthorizationController {
 	}
 
 	@RequestMapping("/postAuthorize")
-	public Optional<String> postAuthorize(AuthorizeResponse authResponse) {
-		try {
-			return Optional.of(authorizationService.postAuthorize(authResponse));
-		} catch (AuthorizeException exception) {
-			logger.error("Cannot authorize", exception);
-		}
-		return Optional.empty();
+	public Optional<TokenResponse> postAuthorize(AuthorizeResponse authResponse) {
+		final TokenResponse tokenResponse = authorizationService.getToken(authResponse.getCode());
+		return Optional.of(tokenResponse);
 	}
 }

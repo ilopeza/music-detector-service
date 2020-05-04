@@ -1,4 +1,4 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
-public class AuthorizeRequest extends AbstractRequest {
+public class TokenRequest extends AbstractRequest {
 }
