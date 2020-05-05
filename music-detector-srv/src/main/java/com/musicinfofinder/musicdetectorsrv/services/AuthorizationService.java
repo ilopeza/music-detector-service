@@ -10,7 +10,7 @@ public interface AuthorizationService {
 
 	String postAuthorize(AuthorizeResponse response) throws AuthorizeException;
 
-	TokenResponse getToken(String code);
+	TokenResponse getToken(String code) throws AuthorizeException;
 
-	TokenResponse refreshToken();
+	TokenResponse refreshToken() throws AuthorizeException;
 }

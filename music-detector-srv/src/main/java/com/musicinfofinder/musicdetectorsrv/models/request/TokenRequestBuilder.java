@@ -19,12 +19,6 @@ public class TokenRequestBuilder extends AbstractRequestBuilder<TokenRequestBuil
 
 	private TokenRequestBuilder(String clientId, String clientSecret) {
 		super();
-		withPath(API_TOKEN);
-		withHost(ACCOUNTS_SPOTIFY_URI);
-		withBodyParameter(GRANT_TYPE, AUTH_GRANT_TYPE);
-		withScheme(HTTPS);
-		withContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
 		String valueToEncode = clientId + ":" + clientSecret;
 		final String encoded = "Basic " + Base64Utils.encodeToString(valueToEncode.getBytes());
 		logger.info("The authorization header is {}", encoded);
@@ -46,12 +40,13 @@ public class TokenRequestBuilder extends AbstractRequestBuilder<TokenRequestBuil
 	}
 
 	@Override
-	protected TokenRequest internalBuild() {
-		TokenRequest tokenRequest = new TokenRequest();
-		return tokenRequest;
-	}
+	public TokenRequest build() {
+		withPath(API_TOKEN);
+		withHost(ACCOUNTS_SPOTIFY_URI);
+		withBodyParameter(GRANT_TYPE, AUTH_GRANT_TYPE);
+		withScheme(HTTPS);
+		withContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-	@Override
-	protected void validate() throws IllegalArgumentException {
+		return new TokenRequest(this);
 	}
 }

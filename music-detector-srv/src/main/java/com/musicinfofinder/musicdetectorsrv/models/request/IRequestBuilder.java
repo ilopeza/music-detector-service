@@ -1,6 +1,10 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
+
+import java.net.URI;
 
 public interface IRequestBuilder<SELF extends IRequestBuilder<SELF, T>, T extends AbstractRequest> {
 	SELF withScheme(final String protocol);
@@ -18,4 +22,12 @@ public interface IRequestBuilder<SELF extends IRequestBuilder<SELF, T>, T extend
 	SELF withContentType(final MediaType mediaType);
 
 	T build();
+
+	URI buildUri();
+
+	MultiValueMap<String, String> getBody();
+
+	HttpHeaders getHeaders();
+
+	MediaType getContentType();
 }

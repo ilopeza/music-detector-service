@@ -4,6 +4,7 @@ import com.musicinfofinder.musicdetectorsrv.enums.ResponseTypeEnum;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.models.request.RefreshTokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.request.TokenRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
@@ -130,6 +131,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
 	@Override
 	public TokenResponse refreshToken() {
+		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
+						.build();
 		return null;
 	}
 }

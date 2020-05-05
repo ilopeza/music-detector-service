@@ -13,8 +13,8 @@ import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
 public class AuthorizeRequestBuilder extends AbstractRequestBuilder<AuthorizeRequestBuilder, AuthorizeRequest> {
 	public static final String HTTPS = "https";
-	public static final String ACCOUNTS_SPOTIFY_URI = "accounts.spotify.com";
-	public static final String AUTHORIZE_ENDPOINT = "authorize";
+	public static final String ACCOUNTS_SPOTIFY_HOST = "accounts.spotify.com";
+	public static final String AUTHORIZE_PATH = "authorize";
 	public static final String CLIENT_ID_KEY = "client_id";
 	public static final String REDIRECT_URI_KEY = "redirect_uri";
 	public static final String SCOPE_KEY = "scope";
@@ -25,9 +25,6 @@ public class AuthorizeRequestBuilder extends AbstractRequestBuilder<AuthorizeReq
 
 	private AuthorizeRequestBuilder() {
 		super();
-		withScheme(HTTPS);
-		withPath(AUTHORIZE_ENDPOINT);
-		withHost(ACCOUNTS_SPOTIFY_URI);
 	}
 
 	public static AuthorizeRequestBuilder requestBuilder() {
@@ -46,7 +43,6 @@ public class AuthorizeRequestBuilder extends AbstractRequestBuilder<AuthorizeReq
 		} catch (UnsupportedEncodingException exception) {
 			logger.error("Uri could not be encoded", exception);
 		}
-		//this.encodedRedirectUri = encodedRedirectUri;**/
 		withQueryParam(REDIRECT_URI_KEY, encodedRedirectUri);
 		return this;
 	}
@@ -73,12 +69,11 @@ public class AuthorizeRequestBuilder extends AbstractRequestBuilder<AuthorizeReq
 	}
 
 	@Override
-	protected AuthorizeRequest internalBuild() {
-		AuthorizeRequest authorizeRequest = new AuthorizeRequest();
-		return authorizeRequest;
-	}
+	public AuthorizeRequest build() {
+		withScheme(HTTPS);
+		withHost(ACCOUNTS_SPOTIFY_HOST);
+		withPath(AUTHORIZE_PATH);
 
-	@Override
-	protected void validate() throws IllegalArgumentException {
+		return new AuthorizeRequest(this);
 	}
 }
