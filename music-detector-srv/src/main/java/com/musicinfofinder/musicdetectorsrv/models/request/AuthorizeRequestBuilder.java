@@ -69,7 +69,7 @@ public class AuthorizeRequestBuilder extends AbstractRequestBuilder<AuthorizeReq
 	}
 
 	@Override
-	public AuthorizeRequest build() {
+	protected AuthorizeRequest internalBuild() {
 		withScheme(HTTPS);
 		withHost(ACCOUNTS_SPOTIFY_HOST);
 		withPath(AUTHORIZE_PATH);

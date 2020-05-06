@@ -4,8 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.Base64Utils;
 
+import static com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder.ACCOUNTS_SPOTIFY_HOST;
+import static com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder.HTTPS;
 import static com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder.AUTHORIZATION_HEADER;
 import static com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder.GRANT_TYPE;
+import static com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder.TOKEN_PATH;
 
 public class RefreshTokenRequestBuilder extends AbstractRequestBuilder<RefreshTokenRequestBuilder, TokenRequest> {
 
@@ -23,13 +26,16 @@ public class RefreshTokenRequestBuilder extends AbstractRequestBuilder<RefreshTo
 		withHeader(AUTHORIZATION_HEADER, encoded);
 	}
 
-	public RefreshTokenRequestBuilder withToken(final String token) {
+	public RefreshTokenRequestBuilder withRefreshToken(final String token) {
 		withBodyParameter("refresh_token", token);
 		return this;
 	}
 
 	@Override
-	public TokenRequest build() {
+	protected TokenRequest internalBuild() {
+		withScheme(HTTPS);
+		withHost(ACCOUNTS_SPOTIFY_HOST);
+		withPath(TOKEN_PATH);
 		withBodyParameter(GRANT_TYPE, "refresh_token");
 		return new TokenRequest(this);
 	}

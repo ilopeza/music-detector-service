@@ -7,7 +7,7 @@ import java.net.URI;
 
 import static com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder.ACCOUNTS_SPOTIFY_HOST;
 import static com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder.HTTPS;
-import static com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder.API_TOKEN;
+import static com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder.TOKEN_PATH;
 import static com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder.AUTHORIZATION_HEADER;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
@@ -23,22 +23,15 @@ public class TokenRequest extends AbstractRequest {
 	protected void validate() throws AuthorizeException {
 		//validate uri
 		final URI uri = getUri();
-		if (equalsIgnoreCase(uri.getScheme(), HTTPS)) {
+		if (!equalsIgnoreCase(uri.getScheme(), HTTPS)) {
 			throw new AuthorizeException("Scheme " + uri.getScheme() + " is not valid. Should be " + HTTPS);
 		}
-		if (equalsIgnoreCase(uri.getPath(), API_TOKEN)) {
-			throw new AuthorizeException("Path " + uri.getPath() + " is not valid. Should be " + API_TOKEN);
+		if (!equalsIgnoreCase(uri.getPath(), "/" + TOKEN_PATH)) {
+			throw new AuthorizeException("Path " + uri.getPath() + " is not valid. Should be " + TOKEN_PATH);
 		}
-		if (equalsIgnoreCase(uri.getHost(), ACCOUNTS_SPOTIFY_HOST)) {
+		if (!equalsIgnoreCase(uri.getHost(), ACCOUNTS_SPOTIFY_HOST)) {
 			throw new AuthorizeException("Host " + uri.getHost() + " is not valid. Should be " + ACCOUNTS_SPOTIFY_HOST);
 		}
-
-		//query params
-		final String query = getUri().getQuery();
-		if (isEmpty(query)) {
-			throw new AuthorizeException("Empty query params.");
-		}
-
 		//headers
 		final HttpHeaders headers = getHeaders();
 		if (isNull(headers)

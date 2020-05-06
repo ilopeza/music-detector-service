@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
@@ -21,7 +22,7 @@ public interface IRequestBuilder<SELF extends IRequestBuilder<SELF, T>, T extend
 
 	SELF withContentType(final MediaType mediaType);
 
-	T build();
+	T build() throws AuthorizeException;
 
 	URI buildUri();
 

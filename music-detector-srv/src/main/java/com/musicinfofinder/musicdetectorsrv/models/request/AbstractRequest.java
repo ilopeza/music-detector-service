@@ -68,4 +68,15 @@ public abstract class AbstractRequest implements IRequest {
 	}
 
 	protected abstract void validate() throws AuthorizeException;
+
+	@Override
+	public String toString() {
+		return "AbstractRequest{" +
+						"uri=" + uri +
+						", headers=" + headers +
+						", contentType=" + contentType +
+						", body=" + body +
+						", queryParams=" + queryParams +
+						'}';
+	}
 }

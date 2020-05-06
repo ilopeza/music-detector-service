@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -93,6 +94,14 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
 						.build(true);
 		final URI uri = uriComponents.toUri();
 		return uri;
+	}
+
+	protected abstract T internalBuild();
+
+	public T build() throws AuthorizeException {
+		final T t = internalBuild();
+		t.validate();
+		return t;
 	}
 
 	private SELF self() {

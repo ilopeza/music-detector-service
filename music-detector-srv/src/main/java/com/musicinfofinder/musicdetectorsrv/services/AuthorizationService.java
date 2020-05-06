@@ -3,6 +3,7 @@ package com.musicinfofinder.musicdetectorsrv.services;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
 import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
+import org.springframework.web.client.RestClientException;
 
 public interface AuthorizationService {
 
@@ -12,5 +13,5 @@ public interface AuthorizationService {
 
 	TokenResponse getToken(String code) throws AuthorizeException;
 
-	TokenResponse refreshToken() throws AuthorizeException;
+	TokenResponse refreshToken() throws AuthorizeException, RestClientException;
 }

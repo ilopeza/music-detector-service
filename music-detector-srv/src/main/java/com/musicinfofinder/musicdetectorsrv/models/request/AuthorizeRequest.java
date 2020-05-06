@@ -17,13 +17,13 @@ public class AuthorizeRequest extends AbstractRequest {
 	@Override
 	protected void validate() throws AuthorizeException {
 		final URI uri = getUri();
-		if (StringUtils.equalsIgnoreCase(uri.getScheme(), HTTPS)) {
+		if (!StringUtils.equalsIgnoreCase(uri.getScheme(), HTTPS)) {
 			throw new AuthorizeException("Scheme " + uri.getScheme() +" is not valid. Should be " + HTTPS);
 		}
-		if (StringUtils.equalsIgnoreCase(uri.getPath(), AUTHORIZE_PATH)) {
+		if (!StringUtils.equalsIgnoreCase(uri.getPath(), "/" + AUTHORIZE_PATH)) {
 			throw new AuthorizeException("Path " + uri.getPath() +" is not valid. Should be " + AUTHORIZE_PATH);
 		}
-		if (StringUtils.equalsIgnoreCase(uri.getHost(), ACCOUNTS_SPOTIFY_HOST)) {
+		if (!StringUtils.equalsIgnoreCase(uri.getHost(), ACCOUNTS_SPOTIFY_HOST)) {
 			throw new AuthorizeException("Host " + uri.getHost() +" is not valid. Should be " + ACCOUNTS_SPOTIFY_HOST);
 		}
 		//query params
