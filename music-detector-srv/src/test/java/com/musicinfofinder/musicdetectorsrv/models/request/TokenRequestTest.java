@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -20,7 +21,7 @@ class TokenRequestTest {
 	private static final String REDIRECT_URI_KEY = "redirect_uri";
 
 	@Test
-	void when_getUri_should_be_equal() {
+	void when_getUri_should_be_equal() throws AuthorizeException {
 		final String finalUri = "https://accounts.spotify.com/api/token";
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(CLIENT_ID, SECRET_CLIENT)
 						.withCode(CODE)
@@ -32,7 +33,7 @@ class TokenRequestTest {
 	}
 
 	@Test
-	void when_create_token_request_should_have_auth_header() {
+	void when_create_token_request_should_have_auth_header() throws AuthorizeException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(CLIENT_ID, SECRET_CLIENT)
 						.withCode(CODE)
 						.withRedirectUri(REDIRECT_URI)
@@ -41,7 +42,7 @@ class TokenRequestTest {
 	}
 
 	@Test
-	void when_create_token_request_should_have_auth_header_equals_to_predefined() {
+	void when_create_token_request_should_have_auth_header_equals_to_predefined() throws AuthorizeException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(CLIENT_ID, SECRET_CLIENT)
 						.withCode(CODE)
 						.withRedirectUri(REDIRECT_URI)
@@ -51,7 +52,7 @@ class TokenRequestTest {
 	}
 
 	@Test
-	void when_create_token_request_should_have_required_body_params() {
+	void when_create_token_request_should_have_required_body_params() throws AuthorizeException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(CLIENT_ID, SECRET_CLIENT)
 						.withCode(CODE)
 						.withRedirectUri(REDIRECT_URI)

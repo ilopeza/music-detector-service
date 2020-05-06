@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,7 +17,15 @@ public abstract class AbstractRequest implements IRequest {
 	private MultiValueMap<String, String> body;
 	private MultiValueMap<String, String> queryParams;
 
-	public AbstractRequest() {
+	public AbstractRequest(IRequestBuilder builder) {
+		this();
+		setUri(builder.buildUri());
+		setBody(builder.getBody());
+		setContentType(builder.getContentType());
+		setHeaders(builder.getHeaders());
+	}
+
+	private AbstractRequest() {
 		this.body = new LinkedMultiValueMap<>();
 		this.queryParams = new LinkedMultiValueMap<>();
 		this.headers = new HttpHeaders();
@@ -27,9 +36,17 @@ public abstract class AbstractRequest implements IRequest {
 		return headers;
 	}
 
+	public void setHeaders(HttpHeaders headers) {
+		this.headers = headers;
+	}
+
 	@Override
 	public MediaType getContentType() {
 		return contentType;
+	}
+
+	public void setContentType(MediaType contentType) {
+		this.contentType = contentType;
 	}
 
 	@Override
@@ -37,24 +54,29 @@ public abstract class AbstractRequest implements IRequest {
 		return this.uri;
 	}
 
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
+
 	@Override
 	public MultiValueMap<String, String> getBody() {
 		return body;
 	}
 
-	public void setUri(URI uri) {
-		this.uri = uri;
-	}
-
-	public void setHeaders(HttpHeaders headers) {
-		this.headers = headers;
-	}
-
-	public void setContentType(MediaType contentType) {
-		this.contentType = contentType;
-	}
-
 	public void setBody(MultiValueMap<String, String> body) {
 		this.body = body;
+	}
+
+	protected abstract void validate() throws AuthorizeException;
+
+	@Override
+	public String toString() {
+		return "AbstractRequest{" +
+						"uri=" + uri +
+						", headers=" + headers +
+						", contentType=" + contentType +
+						", body=" + body +
+						", queryParams=" + queryParams +
+						'}';
 	}
 }

@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.CustomResponseErrorHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -20,7 +21,9 @@ public class MusicDetectorSrvApplication {
 	public RestTemplate getRestTemplate() {
 		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
 		factory.setConnectTimeout(3000);
-		return new RestTemplate(factory);
+		RestTemplate restTemplate = new RestTemplate(factory);
+		restTemplate.setErrorHandler(new CustomResponseErrorHandler());
+		return restTemplate;
 	}
 
 }

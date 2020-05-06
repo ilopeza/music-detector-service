@@ -4,6 +4,7 @@ import com.musicinfofinder.musicdetectorsrv.enums.ResponseTypeEnum;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.models.request.RefreshTokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.request.TokenRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
@@ -28,13 +30,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
 	private final static Logger logger = LogManager.getLogger(AuthorizationServiceImpl.class);
 	private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
-
-	@Value("${api.spotify.client.id}")
-	String clientId;
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
+	@Value("${api.spotify.client.id}")
+	private String clientId;
 	@Value("${api.spotify.client.secret}")
 	private String secretClient;
+	private String token;
+	private String refreshToken;
+	private String code;
 
 	@Override
 	public void authorize() throws AuthorizeException {
@@ -110,13 +114,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		 throw new AuthorizeException("The state code is not recognized");
 		 }**/
 
-		final String code = response.getCode();
+		code = response.getCode();
 		logger.info("Response code is {}", code);
 		return getToken(code).getAccessToken();
 	}
 
 	@Override
-	public TokenResponse getToken(String code) {
+	public TokenResponse getToken(String code) throws AuthorizeException, RestClientException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withCode(code)
 						.withRedirectUri(REDIRECT_URI)
@@ -124,12 +128,24 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
 		ResponseEntity<TokenResponse> responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
 						requestEntity, TokenResponse.class);
-		TokenResponse result = responseEntity.getBody();
-		return result;
+
+		token = responseEntity.getBody().getAccessToken();
+		refreshToken = responseEntity.getBody().getRefreshToken();
+
+		return responseEntity.getBody();
 	}
 
 	@Override
-	public TokenResponse refreshToken() {
-		return null;
+	public TokenResponse refreshToken() throws AuthorizeException, RestClientException {
+		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
+						.withRefreshToken(refreshToken)
+						.build();
+
+		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
+		ResponseEntity<TokenResponse> responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
+						requestEntity, TokenResponse.class);
+		token = responseEntity.getBody().getAccessToken();
+
+		return responseEntity.getBody();
 	}
 }

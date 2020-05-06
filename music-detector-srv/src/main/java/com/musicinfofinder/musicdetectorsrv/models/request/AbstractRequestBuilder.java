@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,7 +22,7 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
 	private MediaType contentType;
 	private MultiValueMap<String, String> queryParams;
 
-	public AbstractRequestBuilder() {
+	protected AbstractRequestBuilder() {
 		this.body = new LinkedMultiValueMap<>();
 		this.queryParams = new LinkedMultiValueMap<>();
 		this.headers = new HttpHeaders();
@@ -69,18 +70,23 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
 	}
 
 	@Override
-	public T build() {
-		validate();
-		T request = internalBuild();
-		request.setUri(buildUri());
-		request.setBody(body);
-		request.setContentType(contentType);
-		request.setHeaders(headers);
-		return request;
+	public MultiValueMap<String, String> getBody() {
+		return body;
 	}
 
-	private URI buildUri() {
-		final UriComponents uriComponents = UriComponentsBuilder.fromUriString("")
+	@Override
+	public HttpHeaders getHeaders() {
+		return headers;
+	}
+
+	@Override
+	public MediaType getContentType() {
+		return contentType;
+	}
+
+	@Override
+	public URI buildUri() {
+		final UriComponents uriComponents = UriComponentsBuilder.newInstance()
 						.scheme(scheme)
 						.host(host)
 						.path(path)
@@ -92,7 +98,11 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
 
 	protected abstract T internalBuild();
 
-	protected abstract void validate() throws IllegalArgumentException;
+	public T build() throws AuthorizeException {
+		final T t = internalBuild();
+		t.validate();
+		return t;
+	}
 
 	private SELF self() {
 		return (SELF) this;
