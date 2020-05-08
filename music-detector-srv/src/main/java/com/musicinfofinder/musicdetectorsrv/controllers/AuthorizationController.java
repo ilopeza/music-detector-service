@@ -47,7 +47,8 @@ public class AuthorizationController {
 	@RequestMapping("/refresh-token")
 	public Optional<TokenResponse> refreshToken() {
 		try {
-			final TokenResponse tokenResponse = authorizationService.refreshToken();
+			//TODO: CHANGE REFRESH TOKEN WITH NULL. THIS IS JUST TEMPORAL UNTIL WE CAN STORE THE DATE IN REDIS.
+			final TokenResponse tokenResponse = authorizationService.refreshToken(null);
 			return Optional.of(tokenResponse);
 		} catch (AuthorizeException exception) {
 			logger.error("Cannot authorize", exception);

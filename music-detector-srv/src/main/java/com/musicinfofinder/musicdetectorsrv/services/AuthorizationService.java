@@ -13,5 +13,5 @@ public interface AuthorizationService {
 
 	TokenResponse getToken(String code) throws AuthorizeException;
 
-	TokenResponse refreshToken() throws AuthorizeException, RestClientException;
+	TokenResponse refreshToken(String refreshToken) throws AuthorizeException, RestClientException;
 }

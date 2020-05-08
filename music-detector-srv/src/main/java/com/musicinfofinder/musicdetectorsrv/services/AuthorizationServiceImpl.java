@@ -136,9 +136,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
-	public TokenResponse refreshToken() throws AuthorizeException, RestClientException {
+	public TokenResponse refreshToken(String refreshToken) throws AuthorizeException, RestClientException {
 		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
-						.withRefreshToken(refreshToken)
+						.withRefreshToken(this.refreshToken)
 						.build();
 
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
