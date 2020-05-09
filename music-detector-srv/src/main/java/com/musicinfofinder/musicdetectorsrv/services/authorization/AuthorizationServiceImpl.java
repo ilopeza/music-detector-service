@@ -1,12 +1,13 @@
-package com.musicinfofinder.musicdetectorsrv.services;
+package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
 import com.musicinfofinder.musicdetectorsrv.enums.ResponseTypeEnum;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
-import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequest;
-import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder;
-import com.musicinfofinder.musicdetectorsrv.models.request.RefreshTokenRequestBuilder;
-import com.musicinfofinder.musicdetectorsrv.models.request.TokenRequest;
-import com.musicinfofinder.musicdetectorsrv.models.request.TokenRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
+import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequest;
+import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.models.request.token.RefreshTokenRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequest;
+import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
 import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +27,7 @@ import java.net.URI;
 import java.util.Arrays;
 
 @Service
-public class AuthorizationServiceImpl implements AuthorizationService {
+public class AuthorizationServiceImpl implements IAuthorizationService {
 
 	private final static Logger logger = LogManager.getLogger(AuthorizationServiceImpl.class);
 	private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
@@ -41,7 +42,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	private String code;
 
 	@Override
-	public void authorize() throws AuthorizeException {
+	public void authorize() throws AuthorizeException, MalformedRequestException {
 		//TODO: GENERATE AN SHA TO ADD AS STATE AND THEN USE IT TO PREVENT ATTACKS
 		final AuthorizeRequest request = AuthorizeRequestBuilder
 						.requestBuilder()
@@ -106,7 +107,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
-	public String postAuthorize(AuthorizeResponse response) throws AuthorizeException {
+	public String postAuthorize(AuthorizeResponse response) throws AuthorizeException, MalformedRequestException {
 		if (response.hasError()) {
 			throw new AuthorizeException("The user has not authorized the application");
 		}
@@ -120,7 +121,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
-	public TokenResponse getToken(String code) throws AuthorizeException, RestClientException {
+	public TokenResponse getToken(String code) throws AuthorizeException, RestClientException, MalformedRequestException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withCode(code)
 						.withRedirectUri(REDIRECT_URI)
@@ -136,7 +137,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
-	public TokenResponse refreshToken(String refreshToken) throws AuthorizeException, RestClientException {
+	public TokenResponse refreshToken() throws AuthorizeException, RestClientException, MalformedRequestException {
 		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withRefreshToken(this.refreshToken)
 						.build();

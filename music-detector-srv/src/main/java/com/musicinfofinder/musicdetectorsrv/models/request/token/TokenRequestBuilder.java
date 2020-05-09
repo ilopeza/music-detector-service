@@ -1,11 +1,12 @@
-package com.musicinfofinder.musicdetectorsrv.models.request;
+package com.musicinfofinder.musicdetectorsrv.models.request.token;
 
+import com.musicinfofinder.musicdetectorsrv.models.request.AbstractRequestBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.util.Base64Utils;
 
-import static com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder.HTTPS;
+import static com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder.HTTPS;
 
 public class TokenRequestBuilder extends AbstractRequestBuilder<TokenRequestBuilder, TokenRequest> {
 	public static final String ACCOUNTS_SPOTIFY_URI = "accounts.spotify.com";

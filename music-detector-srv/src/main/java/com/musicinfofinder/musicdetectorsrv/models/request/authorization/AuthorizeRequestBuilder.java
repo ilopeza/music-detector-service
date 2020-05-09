@@ -1,6 +1,7 @@
-package com.musicinfofinder.musicdetectorsrv.models.request;
+package com.musicinfofinder.musicdetectorsrv.models.request.authorization;
 
-import com.musicinfofinder.musicdetectorsrv.services.AuthorizationServiceImpl;
+import com.musicinfofinder.musicdetectorsrv.models.request.AbstractRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.services.authorization.AuthorizationServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
