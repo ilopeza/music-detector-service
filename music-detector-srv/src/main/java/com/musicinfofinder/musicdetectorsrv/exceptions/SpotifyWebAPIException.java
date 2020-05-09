@@ -2,6 +2,9 @@ package com.musicinfofinder.musicdetectorsrv.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * Exception thrown when the call to the Spotify API fails.
+ */
 public class SpotifyWebAPIException extends RuntimeException {
 	HttpStatus httpStatus;
 

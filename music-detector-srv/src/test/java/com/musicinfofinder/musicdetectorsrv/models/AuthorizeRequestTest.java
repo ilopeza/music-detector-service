@@ -1,9 +1,9 @@
 package com.musicinfofinder.musicdetectorsrv.models;
 
 import com.musicinfofinder.musicdetectorsrv.enums.ResponseTypeEnum;
-import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
-import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequest;
-import com.musicinfofinder.musicdetectorsrv.models.request.AuthorizeRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
+import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequest;
+import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -19,7 +19,7 @@ class AuthorizeRequestTest {
 	private static final String STATE = "34fFs29kd09";
 
 	@Test
-	void when_getAuthorizeUri_should_be_equal() throws AuthorizeException {
+	void when_getAuthorizeUri_should_be_equal() throws MalformedRequestException {
 		final String finalUri = "https://accounts.spotify.com/authorize" +
 						"?client_id=5fe01282e44241328a84e7c5cc169165" +
 						"&response_type=code" +

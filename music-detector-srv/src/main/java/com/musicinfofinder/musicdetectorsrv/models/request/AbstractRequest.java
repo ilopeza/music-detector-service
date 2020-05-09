@@ -1,6 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.request;
 
-import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
+import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -67,7 +67,7 @@ public abstract class AbstractRequest implements IRequest {
 		this.body = body;
 	}
 
-	protected abstract void validate() throws AuthorizeException;
+	protected abstract void validate() throws MalformedRequestException;
 
 	@Override
 	public String toString() {
