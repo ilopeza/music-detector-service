@@ -139,7 +139,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	@Override
 	public TokenResponse refreshToken() throws AuthorizeException, RestClientException, MalformedRequestException {
 		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
-						.withRefreshToken(refreshToken)
+						.withRefreshToken(this.refreshToken)
 						.build();
 
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
