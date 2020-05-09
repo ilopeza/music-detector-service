@@ -1,10 +1,11 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
+import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.SpotifyWebAPIException;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
 import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
-import com.musicinfofinder.musicdetectorsrv.services.AuthorizationService;
+import com.musicinfofinder.musicdetectorsrv.services.authorization.IAuthorizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,13 @@ public class AuthorizationController {
 	private final static Logger logger = LogManager.getLogger(AuthorizationController.class);
 
 	@Autowired
-	private AuthorizationService authorizationService;
+	private IAuthorizationService authorizationService;
 
 	@RequestMapping("/authorize")
 	public void authorize() {
 		try {
 			authorizationService.authorize();
-		} catch (AuthorizeException exception) {
+		} catch (AuthorizeException | MalformedRequestException exception) {
 			logger.error("Cannot authorize", exception);
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized", exception);
 		}
@@ -38,7 +39,7 @@ public class AuthorizationController {
 		try {
 			final TokenResponse tokenResponse = authorizationService.getToken(authResponse.getCode());
 			return Optional.of(tokenResponse);
-		} catch (AuthorizeException | RestClientException exception) {
+		} catch (AuthorizeException | RestClientException | MalformedRequestException exception) {
 			logger.error("Cannot authorize", exception);
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized", exception);
 		}
@@ -49,7 +50,7 @@ public class AuthorizationController {
 		try {
 			final TokenResponse tokenResponse = authorizationService.refreshToken();
 			return Optional.of(tokenResponse);
-		} catch (AuthorizeException exception) {
+		} catch (AuthorizeException | MalformedRequestException exception) {
 			logger.error("Cannot authorize", exception);
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized", exception);
 		} catch (SpotifyWebAPIException exception) {

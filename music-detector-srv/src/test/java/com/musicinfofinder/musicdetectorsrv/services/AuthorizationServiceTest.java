@@ -2,6 +2,8 @@ package com.musicinfofinder.musicdetectorsrv.services;
 
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
+import com.musicinfofinder.musicdetectorsrv.services.authorization.AuthorizationServiceImpl;
+import com.musicinfofinder.musicdetectorsrv.services.authorization.IAuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +16,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthorizationServiceTest {
 
-	AuthorizationService authorizationService;
+	IAuthorizationService authorizationService;
 	@Mock
 	AuthorizeResponse authorizeResponse;
 
