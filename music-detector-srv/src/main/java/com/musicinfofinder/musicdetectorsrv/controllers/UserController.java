@@ -1,6 +1,7 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
 import com.musicinfofinder.musicdetectorsrv.models.entities.user.User;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
 import com.musicinfofinder.musicdetectorsrv.services.user.IUserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO.UserDTOBuilder.anUserDTO;
 import static java.util.Objects.isNull;
 
 @RestController
@@ -25,23 +27,24 @@ public class UserController {
 	IUserService userService;
 
 	@RequestMapping("/current-user")
-	public Optional<User> getCurrentUser() {
+	public Optional<UserDTO> getCurrentUser() {
 		String token = "BQC37G0IVcECDN7c8vBKDspdmawoF_8z4mQ9XLxFQ2-9JYm4dm9b8CnWO0kQ6Wmd_Hx4khyUbjsolHmWf9qDdpZxAgN58a5qUOujINBknDMJIb0vpPGftWcztPzKL9cnjKnV9XEU6cZXkOchoj2HKOBOFL8f0NMd";
-		final User currentUser = userService.getCurrentUser(token);
+		final UserDTO currentUser = userService.getCurrentUser(token);
 		if (isNull(currentUser)) {
 			logger.error("Could not get information for current user with token {}", token);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not get the information for the current user");
 		}
-		final User savedUser = userService.save(currentUser);
-		return Optional.of(savedUser);
+		userService.save(currentUser.toEntity());
+		return Optional.of(currentUser);
 	}
 
 	@GetMapping("/{userId}")
-	public Optional<User> findUserById(@PathVariable("userId") String userId) {
-		final Optional<User> userById = userService.getUserById(userId);
-		if (!userById.isPresent()) {
+	public Optional<UserDTO> findUserById(@PathVariable("userId") String userId) {
+		final Optional<User> user = userService.getUserById(userId);
+		if (!user.isPresent()) {
 			logger.info("User with id {} could not be found", userId);
 		}
-		return userById;
+		return Optional.of(anUserDTO()
+						.fromEntity(user.get()));
 	}
 }

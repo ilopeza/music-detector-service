@@ -5,6 +5,7 @@ import com.musicinfofinder.musicdetectorsrv.exceptions.UserException;
 import com.musicinfofinder.musicdetectorsrv.models.entities.user.User;
 import com.musicinfofinder.musicdetectorsrv.models.request.user.UserRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.user.UserRequestBuilder;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
 import com.musicinfofinder.musicdetectorsrv.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -28,14 +29,14 @@ public class UserService implements IUserService {
 	IUserRepository userRepository;
 
 	@Override
-	public User getCurrentUser(String token) throws RestClientException, MalformedRequestException {
+	public UserDTO getCurrentUser(String token) throws RestClientException, MalformedRequestException {
 		//TODO: SHOOULD GET THE TOKEN
 		UserRequest userRequest = UserRequestBuilder.getRequestBuilder(token)
 						.build();
 		HttpEntity<Object> requestEntity = new HttpEntity<>(userRequest.getBody(), userRequest.getHeaders());
-		ResponseEntity<User> responseEntity = restTemplate.exchange(userRequest.getUri(), HttpMethod.GET,
-						requestEntity, User.class);
-		final User user = responseEntity.getBody();
+		ResponseEntity<UserDTO> responseEntity = restTemplate.exchange(userRequest.getUri(), HttpMethod.GET,
+						requestEntity, UserDTO.class);
+		final UserDTO user = responseEntity.getBody();
 
 		return user;
 	}
