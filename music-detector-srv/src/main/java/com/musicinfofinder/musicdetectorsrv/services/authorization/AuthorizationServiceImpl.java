@@ -2,14 +2,17 @@ package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
 import com.musicinfofinder.musicdetectorsrv.enums.ResponseTypeEnum;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
+import com.musicinfofinder.musicdetectorsrv.exceptions.InvalidParameterException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
+import com.musicinfofinder.musicdetectorsrv.models.entities.authentication.Authentication;
 import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.RefreshTokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequestBuilder;
-import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
-import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
+import com.musicinfofinder.musicdetectorsrv.repository.IAuthenticationRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,10 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Optional;
+
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Service
 public class AuthorizationServiceImpl implements IAuthorizationService {
@@ -32,14 +39,16 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	private final static Logger logger = LogManager.getLogger(AuthorizationServiceImpl.class);
 	private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
 	@Autowired
+	private IAuthenticationRepository authenticationRepository;
+	@Autowired
 	private RestTemplate restTemplate;
 	@Value("${api.spotify.client.id}")
 	private String clientId;
 	@Value("${api.spotify.client.secret}")
 	private String secretClient;
-	private String token;
+	//private String token;
 	private String refreshToken;
-	private String code;
+	//private String code;
 
 	@Override
 	public void authorize() throws AuthorizeException, MalformedRequestException {
@@ -107,7 +116,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	}
 
 	@Override
-	public String postAuthorize(AuthorizeResponse response) throws AuthorizeException, MalformedRequestException {
+	public String postAuthorize(AuthorizationDTO response) throws AuthorizeException, MalformedRequestException {
 		if (response.hasError()) {
 			throw new AuthorizeException("The user has not authorized the application");
 		}
@@ -115,47 +124,85 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 		 throw new AuthorizeException("The state code is not recognized");
 		 }**/
 
-		code = response.getCode();
+		String code = response.getCode();
 		logger.info("Response code is {}", code);
-		return getToken(code).getAccessToken();
+		return requestToken(code).getAccessToken();
 	}
 
 	@Override
-	public TokenResponse getToken(String code) throws AuthorizeException, MalformedRequestException {
+	public TokenDTO requestToken(String code) throws AuthorizeException, MalformedRequestException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withCode(code)
 						.withRedirectUri(REDIRECT_URI)
 						.build();
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
-		ResponseEntity<TokenResponse> responseEntity;
+		ResponseEntity<TokenDTO> responseEntity;
 		try {
-			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST, requestEntity, TokenResponse.class);
+			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST, requestEntity, TokenDTO.class);
 		} catch (RestClientException exception) {
 			throw new AuthorizeException(exception);
 		}
-
-		token = responseEntity.getBody().getAccessToken();
-		refreshToken = responseEntity.getBody().getRefreshToken();
-
 		return responseEntity.getBody();
 	}
 
 	@Override
-	public TokenResponse refreshToken() throws AuthorizeException, MalformedRequestException {
+	public TokenDTO refreshToken(String userId) {
+		if (isBlank(userId)) {
+			throw new InvalidParameterException("User id is required to refresh the token.");
+		}
+		final Optional<Authentication> authenticationOptional = authenticationRepository.findById(userId);
+		if (!authenticationOptional.isPresent()) {
+			throw new AuthorizeException("User with id " + userId + " is not registered. The user should register first.");
+		}
+		final Authentication authentication = authenticationOptional.get();
+		final TokenDTO tokenDTO = requestRefreshToken(authentication.getRefreshToken());
+		authentication.refreshToken(tokenDTO.getRefreshToken(), tokenDTO.getExpiresIn());
+		authenticationRepository.save(authentication);
+		return tokenDTO;
+	}
+
+	@Override
+	public TokenDTO requestRefreshToken(String refreshToken) throws AuthorizeException, MalformedRequestException {
 		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
-						.withRefreshToken(this.refreshToken)
+						.withRefreshToken(refreshToken)
 						.build();
 
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
-		ResponseEntity<TokenResponse> responseEntity;
+		ResponseEntity<TokenDTO> responseEntity;
 		try {
 			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
-							requestEntity, TokenResponse.class);
+							requestEntity, TokenDTO.class);
 		} catch (RestClientException exception) {
 			throw new AuthorizeException(exception);
 		}
-		token = responseEntity.getBody().getAccessToken();
-
 		return responseEntity.getBody();
+	}
+
+	@Override
+	public Authentication save(String userId, String code, TokenDTO token) {
+		if (isBlank(userId)) {
+			throw new InvalidParameterException("User id can not be null or blank");
+		}
+		if (isBlank(code)) {
+			throw new InvalidParameterException("Code can not be null or blank");
+		}
+		if (isNull(token)) {
+			throw new InvalidParameterException("Token information is missing.");
+		}
+		Authentication authentication = Authentication.AuthenticationBuilder.anAuthentication()
+						.withApplicationCode(code)
+						.withUserId(userId)
+						.withExpiresIn(token.getExpiresIn())
+						.withScopes(token.getScope())
+						.withRefreshToken(token.getRefreshToken())
+						.withToken(token.getAccessToken())
+						.withTokenType(token.getTokenType())
+						.build();
+		return authenticationRepository.save(authentication);
+	}
+
+	@Override
+	public Optional<Authentication> getAuthenticationByUserId(String userId) {
+		return authenticationRepository.findById(userId);
 	}
 }

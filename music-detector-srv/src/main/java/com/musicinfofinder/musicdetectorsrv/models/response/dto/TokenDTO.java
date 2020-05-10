@@ -1,11 +1,11 @@
-package com.musicinfofinder.musicdetectorsrv.models.response;
+package com.musicinfofinder.musicdetectorsrv.models.response.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
-public class TokenResponse {
+public class TokenDTO {
 	@JsonProperty("access_token")
 	private String accessToken;
 	@JsonProperty("token_type")
@@ -17,7 +17,7 @@ public class TokenResponse {
 	@JsonProperty("refresh_token")
 	private String refreshToken;
 
-	public TokenResponse() {
+	public TokenDTO() {
 	}
 
 	public String getAccessToken() {

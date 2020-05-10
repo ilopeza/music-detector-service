@@ -1,14 +1,14 @@
-package com.musicinfofinder.musicdetectorsrv.models.response;
+package com.musicinfofinder.musicdetectorsrv.models.response.dto;
 
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
-public class AuthorizeResponse {
+public class AuthorizationDTO {
 	private String code;
 	private String state;
 	private String error;
 
-	public AuthorizeResponse() {
+	public AuthorizationDTO() {
 	}
 
 	public String getError() {

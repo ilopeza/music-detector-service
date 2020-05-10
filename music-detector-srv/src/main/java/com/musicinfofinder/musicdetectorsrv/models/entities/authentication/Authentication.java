@@ -1,0 +1,110 @@
+package com.musicinfofinder.musicdetectorsrv.models.entities.authentication;
+
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
+
+/**
+ * Entity to store the authentication information for one user.
+ */
+@RedisHash("User_authentication")
+public class Authentication {
+
+	@Id
+	private String userId;
+	private String applicationCode;
+	private String token;
+	private String refreshToken;
+	private int expiresIn;
+	private String tokenType;
+	private List<String> scopes;
+	private LocalDateTime expireDate;
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void refreshToken(String token, int expiresIn) {
+		this.token = token;
+		this.expiresIn = expiresIn;
+		this.expireDate = LocalDateTime.now()
+						.plus(Duration.ofSeconds(expiresIn));
+	}
+
+	public static final class AuthenticationBuilder {
+		private String userId;
+		private String applicationCode;
+		private String token;
+		private String refreshToken;
+		private int expiresIn;
+		private String tokenType;
+		private List<String> scopes;
+		private LocalDateTime expireDate;
+
+		private AuthenticationBuilder() {
+		}
+
+		public static AuthenticationBuilder anAuthentication() {
+			return new AuthenticationBuilder();
+		}
+
+		public AuthenticationBuilder withUserId(String userId) {
+			this.userId = userId;
+			return this;
+		}
+
+		public AuthenticationBuilder withApplicationCode(String applicationCode) {
+			this.applicationCode = applicationCode;
+			return this;
+		}
+
+		public AuthenticationBuilder withToken(String token) {
+			this.token = token;
+			return this;
+		}
+
+		public AuthenticationBuilder withRefreshToken(String refreshToken) {
+			this.refreshToken = refreshToken;
+			return this;
+		}
+
+		public AuthenticationBuilder withExpiresIn(int expiresIn) {
+			this.expiresIn = expiresIn;
+			this.expireDate = LocalDateTime.now()
+							.plus(Duration.ofSeconds(expiresIn));
+			return this;
+		}
+
+		public AuthenticationBuilder withTokenType(String tokenType) {
+			this.tokenType = tokenType;
+			return this;
+		}
+
+		public AuthenticationBuilder withScopes(String scopes) {
+			final Set<String> scopesSet = commaDelimitedListToSet(scopes);
+			this.scopes = new ArrayList<>(scopesSet);
+			return this;
+		}
+
+		public Authentication build() {
+			Authentication authentication = new Authentication();
+			authentication.tokenType = this.tokenType;
+			authentication.expireDate = this.expireDate;
+			authentication.token = this.token;
+			authentication.applicationCode = this.applicationCode;
+			authentication.refreshToken = this.refreshToken;
+			authentication.expiresIn = this.expiresIn;
+			authentication.userId = this.userId;
+			authentication.scopes = this.scopes;
+			return authentication;
+		}
+	}
+}

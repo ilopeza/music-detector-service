@@ -1,11 +1,15 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
-import com.musicinfofinder.musicdetectorsrv.models.response.AuthorizeResponse;
-import com.musicinfofinder.musicdetectorsrv.models.response.TokenResponse;
+import com.musicinfofinder.musicdetectorsrv.models.entities.authentication.Authentication;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
+import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
 import com.musicinfofinder.musicdetectorsrv.services.authorization.IAuthorizationService;
+import com.musicinfofinder.musicdetectorsrv.services.user.IUserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +21,8 @@ public class AuthorizationController {
 
 	@Autowired
 	private IAuthorizationService authorizationService;
+	@Autowired
+	private IUserService userService;
 
 	@RequestMapping("/authorize")
 	public void authorize() {
@@ -24,15 +30,19 @@ public class AuthorizationController {
 	}
 
 	@RequestMapping("/postAuthorize")
-	public Optional<TokenResponse> postAuthorize(AuthorizeResponse authResponse) {
-		final TokenResponse tokenResponse = authorizationService.getToken(authResponse.getCode());
-		return Optional.of(tokenResponse);
+	public Optional<Authentication> postAuthorize(AuthorizationDTO authResponse) {
+		final TokenDTO tokenDTO = authorizationService.requestToken(authResponse.getCode());
+		final UserDTO currentUser = userService.getCurrentUser(tokenDTO.getAccessToken());
+
+		final Authentication authentication = authorizationService
+						.save(currentUser.getId(), authResponse.getCode(), tokenDTO);
+
+		return Optional.of(authentication);
 	}
 
-	@RequestMapping("/refresh-token")
-	public Optional<TokenResponse> refreshToken() {
-		//TODO: CHANGE REFRESH TOKEN WITH NULL. THIS IS JUST TEMPORAL UNTIL WE CAN STORE THE DATE IN REDIS.
-		final TokenResponse tokenResponse = authorizationService.refreshToken();
-		return Optional.of(tokenResponse);
+	@RequestMapping("/refresh-token/{user}")
+	public Optional<TokenDTO> refreshToken(@PathVariable("user") String user) {
+		final TokenDTO tokenDTO = authorizationService.refreshToken(user);
+		return Optional.of(tokenDTO);
 	}
 }
