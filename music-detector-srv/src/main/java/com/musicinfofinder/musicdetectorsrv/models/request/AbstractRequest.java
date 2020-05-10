@@ -15,7 +15,7 @@ public abstract class AbstractRequest implements IRequest {
 	private HttpHeaders headers;
 	private MediaType contentType;
 	private MultiValueMap<String, String> body;
-	private MultiValueMap<String, String> queryParams;
+	private final MultiValueMap<String, String> queryParams;
 
 	public AbstractRequest(IRequestBuilder builder) {
 		this();

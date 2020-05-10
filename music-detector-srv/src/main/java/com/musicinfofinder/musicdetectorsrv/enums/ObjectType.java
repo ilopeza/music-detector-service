@@ -2,7 +2,7 @@ package com.musicinfofinder.musicdetectorsrv.enums;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public enum  ObjectType {
+public enum ObjectType {
 	@JsonProperty("user")
 	USER(0, "user"),
 	@JsonProperty("track")

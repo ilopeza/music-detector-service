@@ -121,14 +121,18 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	}
 
 	@Override
-	public TokenResponse getToken(String code) throws AuthorizeException, RestClientException, MalformedRequestException {
+	public TokenResponse getToken(String code) throws AuthorizeException, MalformedRequestException {
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withCode(code)
 						.withRedirectUri(REDIRECT_URI)
 						.build();
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
-		ResponseEntity<TokenResponse> responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
-						requestEntity, TokenResponse.class);
+		ResponseEntity<TokenResponse> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST, requestEntity, TokenResponse.class);
+		} catch (RestClientException exception) {
+			throw new AuthorizeException(exception);
+		}
 
 		token = responseEntity.getBody().getAccessToken();
 		refreshToken = responseEntity.getBody().getRefreshToken();
@@ -137,14 +141,19 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	}
 
 	@Override
-	public TokenResponse refreshToken() throws AuthorizeException, RestClientException, MalformedRequestException {
+	public TokenResponse refreshToken() throws AuthorizeException, MalformedRequestException {
 		final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withRefreshToken(this.refreshToken)
 						.build();
 
 		HttpEntity<Object> requestEntity = new HttpEntity<>(tokenRequest.getBody(), tokenRequest.getHeaders());
-		ResponseEntity<TokenResponse> responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
-						requestEntity, TokenResponse.class);
+		ResponseEntity<TokenResponse> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
+							requestEntity, TokenResponse.class);
+		} catch (RestClientException exception) {
+			throw new AuthorizeException(exception);
+		}
 		token = responseEntity.getBody().getAccessToken();
 
 		return responseEntity.getBody();
