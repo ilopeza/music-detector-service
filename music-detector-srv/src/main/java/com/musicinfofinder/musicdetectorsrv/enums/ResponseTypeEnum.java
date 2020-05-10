@@ -3,8 +3,8 @@ package com.musicinfofinder.musicdetectorsrv.enums;
 public enum ResponseTypeEnum {
 	CODE(0, "code");
 
-	private int code;
-	private String name;
+	private final int code;
+	private final String name;
 
 	ResponseTypeEnum(int code, String name) {
 		this.code = code;

@@ -18,9 +18,9 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
 	private String scheme;
 	private String host;
 	private String path;
-	private HttpHeaders headers;
+	private final HttpHeaders headers;
 	private MediaType contentType;
-	private MultiValueMap<String, String> queryParams;
+	private final MultiValueMap<String, String> queryParams;
 
 	protected AbstractRequestBuilder() {
 		this.body = new LinkedMultiValueMap<>();
