@@ -46,9 +46,6 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	private String clientId;
 	@Value("${api.spotify.client.secret}")
 	private String secretClient;
-	//private String token;
-	private String refreshToken;
-	//private String code;
 
 	@Override
 	public void authorize() throws AuthorizeException, MalformedRequestException {
@@ -155,10 +152,10 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 			throw new AuthorizeException("User with id " + userId + " is not registered. The user should register first.");
 		}
 		final Authentication authentication = authenticationOptional.get();
-		final TokenDTO tokenDTO = requestRefreshToken(authentication.getRefreshToken());
-		authentication.refreshToken(tokenDTO.getRefreshToken(), tokenDTO.getExpiresIn());
+		final TokenDTO refreshedToken = requestRefreshToken(authentication.getRefreshToken());
+		authentication.refreshToken(refreshedToken.getAccessToken(), refreshedToken.getExpiresIn());
 		authenticationRepository.save(authentication);
-		return tokenDTO;
+		return refreshedToken;
 	}
 
 	@Override
