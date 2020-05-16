@@ -91,7 +91,7 @@ class CustomErrorResponseHandlerTest {
 	void when_handleAuthenticationExceptions_should_return_same_status_code_as_exception() {
 		when(authorizeException.getHttpStatusCodeException()).thenReturn(httpStatusCodeException);
 		when(httpStatusCodeException.getResponseBodyAsString()).thenReturn(HTTP_AUTH_EXCEPTION_RESPONSE_BODY);
-		when(httpStatusCodeException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
+		//when(httpStatusCodeException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
 		final ResponseEntity<Object> responseEntity = customErrorResponseHandler.handleAuthenticationExceptions(authorizeException, request);
 		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
 	}
@@ -100,7 +100,7 @@ class CustomErrorResponseHandlerTest {
 	void when_handleAuthenticationExceptions_should_return_error_description_from_exception() {
 		when(authorizeException.getHttpStatusCodeException()).thenReturn(httpStatusCodeException);
 		when(httpStatusCodeException.getResponseBodyAsString()).thenReturn(HTTP_AUTH_EXCEPTION_RESPONSE_BODY);
-		when(httpStatusCodeException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
+		//when(httpStatusCodeException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
 		final ResponseEntity<Object> responseEntity = customErrorResponseHandler.handleAuthenticationExceptions(authorizeException, request);
 		final AuthenticationErrorResponse body = (AuthenticationErrorResponse) responseEntity.getBody();
 		assertEquals(INVALID_CLIENT_ID_ERROR_DESC, body.getErrorDescription());
@@ -109,7 +109,7 @@ class CustomErrorResponseHandlerTest {
 	@Test
 	void when_handleAuthenticationExceptions_should_return_error_from_exception() {
 		when(authorizeException.getHttpStatusCodeException()).thenReturn(httpStatusCodeException);
-		when(httpStatusCodeException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
+		//when(httpStatusCodeException.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED);
 		when(httpStatusCodeException.getResponseBodyAsString()).thenReturn(HTTP_AUTH_EXCEPTION_RESPONSE_BODY);
 		final ResponseEntity<Object> responseEntity = customErrorResponseHandler.handleAuthenticationExceptions(authorizeException, request);
 		final AuthenticationErrorResponse body = (AuthenticationErrorResponse) responseEntity.getBody();

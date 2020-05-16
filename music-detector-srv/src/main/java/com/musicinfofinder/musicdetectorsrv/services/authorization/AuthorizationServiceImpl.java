@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -149,7 +150,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 		}
 		final Optional<Authentication> authenticationOptional = authenticationRepository.findById(userId);
 		if (!authenticationOptional.isPresent()) {
-			throw new AuthorizeException("User with id " + userId + " is not registered. The user should register first.");
+			throw new InvalidParameterException("User with id " + userId + " is not registered. The user should register first.");
 		}
 		final Authentication authentication = authenticationOptional.get();
 		final TokenDTO refreshedToken = requestRefreshToken(authentication.getRefreshToken());
@@ -198,6 +199,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 		return authenticationRepository.save(authentication);
 	}
 
+	@Cacheable(value = "authentication", key = "#userId")
 	@Override
 	public Optional<Authentication> getAuthenticationByUserId(String userId) {
 		return authenticationRepository.findById(userId);
