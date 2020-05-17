@@ -29,7 +29,7 @@ public class UserService implements IUserService {
 	IUserRepository userRepository;
 
 	@Override
-	public UserDTO getCurrentUser(String token) throws RestClientException, MalformedRequestException {
+	public UserDTO requestCurrent(String token) throws RestClientException, MalformedRequestException {
 		//TODO: SHOOULD GET THE TOKEN
 		UserRequest userRequest = UserRequestBuilder.getRequestBuilder(token)
 						.build();
@@ -42,20 +42,25 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public User save(User user) throws UserException {
+	public UserDTO save(User user) throws UserException {
 		if (isNull(user)) {
 			throw new UserException("User can not be null");
 		}
-		final User savedUser = userRepository.save(user);
+		final UserDTO savedUser = UserDTO.UserDTOBuilder.anUserDTO().fromEntity(userRepository.save(user));
 		return savedUser;
 	}
 
 	@Override
-	public Optional<User> getUserById(String id) throws UserException {
+	public Optional<UserDTO> get(String id) throws UserException {
 		if (isBlank(id)) {
 			throw new UserException("Id cannot be blank");
 		}
 		final Optional<User> optionalUser = userRepository.findById(id);
-		return optionalUser;
+		if (!optionalUser.isPresent()) {
+			return Optional.empty();
+		}
+		final UserDTO userDTO = UserDTO.UserDTOBuilder.anUserDTO()
+						.fromEntity(optionalUser.get());
+		return Optional.of(userDTO);
 	}
 }
