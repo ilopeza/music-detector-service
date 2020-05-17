@@ -1,6 +1,5 @@
-package com.musicinfofinder.musicdetectorsrv.models.entities.authentication;
+package com.musicinfofinder.musicdetectorsrv.models.entities.credentials;
 
-import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -14,10 +13,10 @@ import java.util.Set;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
- * Entity to store the authentication information for one user.
+ * Entity to store the credentials information for one user.
  */
-@RedisHash("User_authentication")
-public class Authentication implements Serializable {
+@RedisHash("User_credentials")
+public class UserCredentials implements Serializable {
 
 	@Id
 	private String userId;
@@ -38,6 +37,22 @@ public class Authentication implements Serializable {
 		this.expiresIn = expiresIn;
 		this.expireDate = LocalDateTime.now()
 						.plus(Duration.ofSeconds(expiresIn));
+	}
+
+	public String getUserId() {
+		return this.userId;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public List<String> getScopes() {
+		return scopes;
+	}
+
+	public LocalDateTime getExpireDate() {
+		return expireDate;
 	}
 
 	public static final class AuthenticationBuilder {
@@ -95,17 +110,17 @@ public class Authentication implements Serializable {
 			return this;
 		}
 
-		public Authentication build() {
-			Authentication authentication = new Authentication();
-			authentication.tokenType = this.tokenType;
-			authentication.expireDate = this.expireDate;
-			authentication.token = this.token;
-			authentication.applicationCode = this.applicationCode;
-			authentication.refreshToken = this.refreshToken;
-			authentication.expiresIn = this.expiresIn;
-			authentication.userId = this.userId;
-			authentication.scopes = this.scopes;
-			return authentication;
+		public UserCredentials build() {
+			UserCredentials userCredentials = new UserCredentials();
+			userCredentials.tokenType = this.tokenType;
+			userCredentials.expireDate = this.expireDate;
+			userCredentials.token = this.token;
+			userCredentials.applicationCode = this.applicationCode;
+			userCredentials.refreshToken = this.refreshToken;
+			userCredentials.expiresIn = this.expiresIn;
+			userCredentials.userId = this.userId;
+			userCredentials.scopes = this.scopes;
+			return userCredentials;
 		}
 	}
 }
