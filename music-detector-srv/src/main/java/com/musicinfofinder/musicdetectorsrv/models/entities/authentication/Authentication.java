@@ -4,6 +4,7 @@ import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  * Entity to store the authentication information for one user.
  */
 @RedisHash("User_authentication")
-public class Authentication {
+public class Authentication implements Serializable {
 
 	@Id
 	private String userId;

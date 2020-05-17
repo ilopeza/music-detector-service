@@ -40,6 +40,12 @@ public class AuthorizationController {
 		return Optional.of(authentication);
 	}
 
+	@RequestMapping("/authentication/{user}")
+	public Optional<Authentication> getAuthenticationForUser(@PathVariable("user") String user) {
+		final Optional<Authentication> authentication = authorizationService.getAuthenticationByUserId(user);
+		return authentication;
+	}
+
 	@RequestMapping("/refresh-token/{user}")
 	public Optional<TokenDTO> refreshToken(@PathVariable("user") String user) {
 		final TokenDTO tokenDTO = authorizationService.refreshToken(user);

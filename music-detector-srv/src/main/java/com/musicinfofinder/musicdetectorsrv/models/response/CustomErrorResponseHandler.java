@@ -80,19 +80,22 @@ public class CustomErrorResponseHandler extends ResponseEntityExceptionHandler {
 	 * @param request
 	 * @return AuthenticationErrorResponse entity with information about the authentication issue with status HttpStatus.UNAUTHORIZED
 	 */
+	//TODO: REFACTOR  HOW AUTH EXCEPTIONS ARE HANDLED
 	@ExceptionHandler({AuthorizeException.class})
 	public ResponseEntity<Object> handleAuthenticationExceptions(AuthorizeException exception, WebRequest request) {
-		String errorMessage = (String) extractFomJson(exception.getHttpStatusCodeException().getResponseBodyAsString(), ERROR_DESCRIPTION_KEY)
+		final HttpStatusCodeException statusCodeException = exception.getHttpStatusCodeException();
+		String errorMessage = statusCodeException == null ? exception.getMessage() : (String) extractFomJson(statusCodeException.getResponseBodyAsString(), ERROR_DESCRIPTION_KEY)
 						.orElseGet(() -> Optional.of(exception.getLocalizedMessage()));
-		String error = (String) extractFomJson(exception.getHttpStatusCodeException().getResponseBodyAsString(), ERROR_KEY)
+		String error = statusCodeException == null ? exception.getMessage() : (String) extractFomJson(statusCodeException.getResponseBodyAsString(), ERROR_KEY)
 						.orElseGet(() -> Optional.of(exception.getLocalizedMessage()));
 		final AuthenticationErrorResponse regularErrorResponse = AuthenticationErrorResponse.AuthenticationErrorResponseBuilder.anAuthenticationError()
 						.withError(error)
 						.withErrorDescription(errorMessage)
 						.build();
-		final HttpStatusCodeException httpStatusCodeException = exception.getHttpStatusCodeException();
 
-		return new ResponseEntity(regularErrorResponse, httpStatusCodeException.getResponseHeaders(), httpStatusCodeException.getStatusCode());
+		ResponseEntity responseEntity = statusCodeException == null ? new ResponseEntity(regularErrorResponse, statusCodeException.getResponseHeaders(), statusCodeException.getStatusCode())
+						: new ResponseEntity(regularErrorResponse, HttpStatus.UNAUTHORIZED);
+		return responseEntity;
 	}
 
 	/**
