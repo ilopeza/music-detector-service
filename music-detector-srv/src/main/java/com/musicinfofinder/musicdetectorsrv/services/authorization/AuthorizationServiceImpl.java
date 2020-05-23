@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -75,7 +76,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 				throw new AuthorizeException("Cannot identify OS");
 			}
 		} catch (Exception e) {
-			throw new AuthorizeException("Cannot open dialog to authorize");
+			throw new AuthorizeException("Cannot open dialog to authorize", HttpStatus.UNAUTHORIZED);
 		}
 	}
 
@@ -95,7 +96,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 	@Override
 	public String postAuthorize(AuthorizationDTO response) throws AuthorizeException, MalformedRequestException {
 		if (response.hasError()) {
-			throw new AuthorizeException("The user has not authorized the application");
+			throw new AuthorizeException("The user has not authorized the application", HttpStatus.UNAUTHORIZED);
 		}
 		/**if (!response.isValidState(STATE)) {
 		 throw new AuthorizeException("The state code is not recognized");

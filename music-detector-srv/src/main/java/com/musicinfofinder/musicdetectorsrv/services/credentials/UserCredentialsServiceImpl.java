@@ -7,6 +7,7 @@ import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserCredentialsD
 import com.musicinfofinder.musicdetectorsrv.repository.IUserCredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,13 +23,13 @@ public class UserCredentialsServiceImpl implements IUserCredentialsService {
 	@Override
 	public UserCredentialsDTO save(String userId, String code, TokenDTO token) {
 		if (isBlank(userId)) {
-			throw new InvalidParameterException("User id can not be null or blank");
+			throw new InvalidParameterException("User id can not be null or blank", HttpStatus.BAD_REQUEST);
 		}
 		if (isBlank(code)) {
-			throw new InvalidParameterException("Code can not be null or blank");
+			throw new InvalidParameterException("Code can not be null or blank", HttpStatus.BAD_REQUEST);
 		}
 		if (isNull(token)) {
-			throw new InvalidParameterException("Token information is missing.");
+			throw new InvalidParameterException("Token information is missing.", HttpStatus.BAD_REQUEST);
 		}
 		UserCredentials userCredentials = UserCredentials.AuthenticationBuilder.anAuthentication()
 						.withApplicationCode(code)
@@ -39,6 +40,7 @@ public class UserCredentialsServiceImpl implements IUserCredentialsService {
 						.withToken(token.getAccessToken())
 						.withTokenType(token.getTokenType())
 						.build();
+		//TODO: Move DTO's to controller.
 		UserCredentialsDTO userCredentialsDTO = UserCredentialsDTO.fromEntity(authenticationRepository.save(userCredentials));
 		return userCredentialsDTO;
 	}
