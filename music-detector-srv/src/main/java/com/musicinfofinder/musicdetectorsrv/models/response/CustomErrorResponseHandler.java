@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.models.response;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizationSpotifyRestApiException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.GeneralMusicDetectorException;
 import com.musicinfofinder.musicdetectorsrv.models.response.error.AuthenticationErrorResponse;
@@ -20,9 +21,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.musicinfofinder.musicdetectorsrv.models.response.error.RegularErrorResponse.RegularErrorResponseBuilder.aRegularErrorResponse;
+import static java.util.Objects.isNull;
 
 /**
  * Handles the exceptions to show custom responses with an adequate level of details.
@@ -45,8 +48,8 @@ public class CustomErrorResponseHandler extends ResponseEntityExceptionHandler {
 	 */
 	@ExceptionHandler({HttpServerErrorException.class, HttpClientErrorException.class})
 	public ResponseEntity<Object> handleHttpExceptions(HttpStatusCodeException exception, WebRequest request) {
-		final String message = (String) extractFomJson(exception.getResponseBodyAsString(), ERROR_MESSAGE)
-						.orElseGet(() -> Optional.of(exception.getLocalizedMessage()));
+		final String message = String.valueOf(extractFomJson(exception.getResponseBodyAsString(), ERROR_MESSAGE)
+						.orElseGet(() -> Optional.of(exception.getLocalizedMessage())));
 		final RegularErrorResponse regularErrorResponse = aRegularErrorResponse()
 						.withMessage(message)
 						.withStatus(exception.getStatusCode())
@@ -64,12 +67,12 @@ public class CustomErrorResponseHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({GeneralMusicDetectorException.class})
 	public ResponseEntity<Object> handleGeneralMusicExceptions(GeneralMusicDetectorException exception, WebRequest request) {
 		String message = exception.getLocalizedMessage();
+		HttpStatus status = isNull(exception.getHttpStatus()) ? HttpStatus.INTERNAL_SERVER_ERROR : exception.getHttpStatus();
 
 		final RegularErrorResponse regularErrorResponse = aRegularErrorResponse()
 						.withMessage(message)
-						.withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+						.withStatus(status)
 						.build();
-
 		return new ResponseEntity(regularErrorResponse, regularErrorResponse.getStatus());
 	}
 
@@ -80,22 +83,27 @@ public class CustomErrorResponseHandler extends ResponseEntityExceptionHandler {
 	 * @param request
 	 * @return AuthenticationErrorResponse entity with information about the authentication issue with status HttpStatus.UNAUTHORIZED
 	 */
-	//TODO: REFACTOR  HOW AUTH EXCEPTIONS ARE HANDLED
-	@ExceptionHandler({AuthorizeException.class})
+	@ExceptionHandler({AuthorizationSpotifyRestApiException.class})
 	public ResponseEntity<Object> handleAuthenticationExceptions(AuthorizeException exception, WebRequest request) {
-		final HttpStatusCodeException statusCodeException = exception.getHttpStatusCodeException();
-		String errorMessage = statusCodeException == null ? exception.getMessage() : (String) extractFomJson(statusCodeException.getResponseBodyAsString(), ERROR_DESCRIPTION_KEY)
-						.orElseGet(() -> Optional.of(exception.getLocalizedMessage()));
-		String error = statusCodeException == null ? exception.getMessage() : (String) extractFomJson(statusCodeException.getResponseBodyAsString(), ERROR_KEY)
-						.orElseGet(() -> Optional.of(exception.getLocalizedMessage()));
+		String errorMessage = exception.getLocalizedMessage();
+		String error = exception.getLocalizedMessage();
+
+		//this should always be an HttpStatusCodeException but just in case...
+		if (exception.getCause() instanceof HttpStatusCodeException) {
+			//if it is an HttpStatusCodeException, extract the message from the causing exception.
+			final HttpStatusCodeException statusCodeException = (HttpStatusCodeException) exception.getCause();
+			errorMessage = String.valueOf(extractFomJson(statusCodeException.getResponseBodyAsString(), ERROR_DESCRIPTION_KEY)
+					.orElseGet(() -> Optional.of(exception.getLocalizedMessage())));
+			error = String.valueOf(extractFomJson(statusCodeException.getResponseBodyAsString(), ERROR_KEY)
+					.orElseGet(() -> Optional.of(exception.getLocalizedMessage())));
+		}
+
 		final AuthenticationErrorResponse regularErrorResponse = AuthenticationErrorResponse.AuthenticationErrorResponseBuilder.anAuthenticationError()
 						.withError(error)
 						.withErrorDescription(errorMessage)
 						.build();
 
-		ResponseEntity responseEntity = statusCodeException == null ? new ResponseEntity(regularErrorResponse, statusCodeException.getResponseHeaders(), statusCodeException.getStatusCode())
-						: new ResponseEntity(regularErrorResponse, HttpStatus.UNAUTHORIZED);
-		return responseEntity;
+		return new ResponseEntity(regularErrorResponse, HttpStatus.UNAUTHORIZED);
 	}
 
 	/**
@@ -107,7 +115,6 @@ public class CustomErrorResponseHandler extends ResponseEntityExceptionHandler {
 	 */
 	public Optional<Object> extractFomJson(String message, String keys) {
 		LinkedHashMap<String, Object> rawErrorMap;
-		Object result;
 		try {
 			JSONParser parser = new JSONParser(message);
 			rawErrorMap = parser.parseObject();

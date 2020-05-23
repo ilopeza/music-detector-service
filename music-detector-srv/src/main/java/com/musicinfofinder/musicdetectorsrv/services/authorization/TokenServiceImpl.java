@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
+import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizationSpotifyRestApiException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.InvalidParameterException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -37,6 +39,9 @@ public class TokenServiceImpl implements ITokenService {
 
 	@Override
 	public TokenDTO requestToken(String code) throws AuthorizeException, MalformedRequestException {
+		if (isBlank(code)) {
+			throw new InvalidParameterException("The application code is required to get the token.", HttpStatus.BAD_REQUEST);
+		}
 		final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(clientId, secretClient)
 						.withCode(code)
 						.withRedirectUri(REDIRECT_URI)
@@ -46,7 +51,7 @@ public class TokenServiceImpl implements ITokenService {
 		try {
 			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST, requestEntity, TokenDTO.class);
 		} catch (RestClientException exception) {
-			throw new AuthorizeException(exception);
+			throw new AuthorizationSpotifyRestApiException(exception);
 		}
 		return responseEntity.getBody();
 	}
@@ -54,7 +59,7 @@ public class TokenServiceImpl implements ITokenService {
 	@Override
 	public TokenDTO refreshToken(String userId) {
 		if (isBlank(userId)) {
-			throw new InvalidParameterException("User id is required to refresh the token.");
+			throw new InvalidParameterException("User id is required to refresh the token.", HttpStatus.BAD_REQUEST);
 		}
 		//get credentials from db
 		final Optional<UserCredentials> optionalUserCredentials = userCredentialsRepository.findById(userId);
@@ -93,7 +98,7 @@ public class TokenServiceImpl implements ITokenService {
 			responseEntity = restTemplate.exchange(tokenRequest.getUri(), HttpMethod.POST,
 							requestEntity, TokenDTO.class);
 		} catch (RestClientException exception) {
-			throw new AuthorizeException(exception);
+			throw new AuthorizationSpotifyRestApiException(exception);
 		}
 		return responseEntity.getBody();
 	}
