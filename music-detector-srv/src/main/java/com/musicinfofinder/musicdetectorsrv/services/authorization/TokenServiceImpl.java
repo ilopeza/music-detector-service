@@ -9,7 +9,7 @@ import com.musicinfofinder.musicdetectorsrv.models.request.token.RefreshTokenReq
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
-import com.musicinfofinder.musicdetectorsrv.repository.IUserCredentialsRepository;
+import com.musicinfofinder.musicdetectorsrv.services.credentials.IUserCredentialsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -29,7 +29,7 @@ public class TokenServiceImpl implements ITokenService {
 
 	private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
 	@Autowired
-	private IUserCredentialsRepository userCredentialsRepository;
+	private IUserCredentialsService userCredentialsService;
 	@Autowired
 	private RestTemplate restTemplate;
 	@Value("${api.spotify.client.id}")
@@ -62,7 +62,7 @@ public class TokenServiceImpl implements ITokenService {
 			throw new InvalidParameterException("User id is required to refresh the token.", HttpStatus.BAD_REQUEST);
 		}
 		//get credentials from db
-		UserCredentials userCredentials = userCredentialsRepository.findById(userId)
+		UserCredentials userCredentials = userCredentialsService.get(userId)
 				.orElseThrow(() -> new AuthorizeException("Could not get credentials for user with id " + userId,
 						HttpStatus.UNAUTHORIZED));
 		//call spotify api to refresh token
@@ -81,7 +81,7 @@ public class TokenServiceImpl implements ITokenService {
 	private void updateCurrentUserCredentials(UserCredentials userCredentials, TokenDTO refreshedToken) {
 		userCredentials.refreshToken(refreshedToken.getAccessToken(), refreshedToken.getExpiresIn());
 		//update the values in the db
-		userCredentialsRepository.save(userCredentials);
+		userCredentialsService.save(userCredentials);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
 	public String getTokenForUser(String userId) {
-		UserCredentials userCredentials = userCredentialsRepository.findById(userId)
+		UserCredentials userCredentials = userCredentialsService.get(userId)
 				.orElseThrow(() -> new AuthorizeException("Could not get credentials for user with id " + userId,
 						HttpStatus.UNAUTHORIZED));
 		if (isTokenValid(userCredentials)) {
@@ -116,6 +116,6 @@ public class TokenServiceImpl implements ITokenService {
 	private boolean isTokenValid(UserCredentials userCredentials) {
 		LocalDateTime expireDate = userCredentials
 				.getExpireDate();
-		return LocalDateTime.now().isAfter(expireDate);
+		return LocalDateTime.now().isBefore(expireDate);
 	}
 }

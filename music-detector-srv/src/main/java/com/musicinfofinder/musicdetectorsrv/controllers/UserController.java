@@ -1,7 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
-import com.musicinfofinder.musicdetectorsrv.services.credentials.IUserCredentialsService;
 import com.musicinfofinder.musicdetectorsrv.services.user.IUserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,15 +23,12 @@ public class UserController {
 
 	@Autowired
 	IUserService userService;
-	@Autowired
-	IUserCredentialsService userCredentialsService;
 
-	@RequestMapping("/current")
-	public Optional<UserDTO> getCurrentUser() {
-		String token = "BQC37G0IVcECDN7c8vBKDspdmawoF_8z4mQ9XLxFQ2-9JYm4dm9b8CnWO0kQ6Wmd_Hx4khyUbjsolHmWf9qDdpZxAgN58a5qUOujINBknDMJIb0vpPGftWcztPzKL9cnjKnV9XEU6cZXkOchoj2HKOBOFL8f0NMd";
-		final UserDTO currentUser = userService.requestCurrent(token);
+	@GetMapping("/current/{userId}")
+	public Optional<UserDTO> getCurrentUser(@PathVariable("userId") String userId) {
+		final UserDTO currentUser = userService.requestCurrent(userId);
 		if (isNull(currentUser)) {
-			logger.error("Could not get information for current user with token {}", token);
+			logger.error("Could not get information for current user with id {}", userId);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not get the information for the current user");
 		}
 		userService.save(currentUser.toEntity());
