@@ -5,51 +5,51 @@ package com.musicinfofinder.musicdetectorsrv.models.response.error;
  * See https://developer.spotify.com/documentation/web-api/#authentication-error-object}
  */
 public class AuthenticationErrorResponse {
-	private String error;
-	private String errorDescription;
+    private String error;
+    private String errorDescription;
 
-	public String getError() {
-		return error;
-	}
+    public String getError() {
+        return error;
+    }
 
-	public void setError(String error) {
-		this.error = error;
-	}
+    public void setError(String error) {
+        this.error = error;
+    }
 
-	public String getErrorDescription() {
-		return errorDescription;
-	}
+    public String getErrorDescription() {
+        return errorDescription;
+    }
 
-	public void setErrorDescription(String errorDescription) {
-		this.errorDescription = errorDescription;
-	}
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
+    }
 
-	public static final class AuthenticationErrorResponseBuilder {
-		private String error;
-		private String errorDescription;
+    public static final class AuthenticationErrorResponseBuilder {
+        private String error;
+        private String errorDescription;
 
-		private AuthenticationErrorResponseBuilder() {
-		}
+        private AuthenticationErrorResponseBuilder() {
+        }
 
-		public static AuthenticationErrorResponseBuilder anAuthenticationError() {
-			return new AuthenticationErrorResponseBuilder();
-		}
+        public static AuthenticationErrorResponseBuilder anAuthenticationError() {
+            return new AuthenticationErrorResponseBuilder();
+        }
 
-		public AuthenticationErrorResponseBuilder withError(String error) {
-			this.error = error;
-			return this;
-		}
+        public AuthenticationErrorResponseBuilder withError(String error) {
+            this.error = error;
+            return this;
+        }
 
-		public AuthenticationErrorResponseBuilder withErrorDescription(String errorDescription) {
-			this.errorDescription = errorDescription;
-			return this;
-		}
+        public AuthenticationErrorResponseBuilder withErrorDescription(String errorDescription) {
+            this.errorDescription = errorDescription;
+            return this;
+        }
 
-		public AuthenticationErrorResponse build() {
-			AuthenticationErrorResponse authenticationErrorResponse = new AuthenticationErrorResponse();
-			authenticationErrorResponse.error = this.error;
-			authenticationErrorResponse.errorDescription = this.errorDescription;
-			return authenticationErrorResponse;
-		}
-	}
+        public AuthenticationErrorResponse build() {
+            AuthenticationErrorResponse authenticationErrorResponse = new AuthenticationErrorResponse();
+            authenticationErrorResponse.error = this.error;
+            authenticationErrorResponse.errorDescription = this.errorDescription;
+            return authenticationErrorResponse;
+        }
+    }
 }

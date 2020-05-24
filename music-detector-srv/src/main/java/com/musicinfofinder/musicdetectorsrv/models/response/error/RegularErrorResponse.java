@@ -7,67 +7,67 @@ import org.springframework.http.HttpStatus;
  * See https://developer.spotify.com/documentation/web-api/#regular-error-object
  */
 public class RegularErrorResponse {
-	private HttpStatus status;
-	private String message;
+    private HttpStatus status;
+    private String message;
 
-	public HttpStatus getStatus() {
-		return status;
-	}
+    public HttpStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(HttpStatus status) {
-		this.status = status;
-	}
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public static final class RegularErrorResponseBuilder {
-		private HttpStatus status;
-		private String message;
+    public static final class RegularErrorResponseBuilder {
+        private HttpStatus status;
+        private String message;
 
-		private RegularErrorResponseBuilder() {
-		}
+        private RegularErrorResponseBuilder() {
+        }
 
-		public static RegularErrorResponseBuilder aRegularErrorResponse() {
-			return new RegularErrorResponseBuilder();
-		}
+        public static RegularErrorResponseBuilder aRegularErrorResponse() {
+            return new RegularErrorResponseBuilder();
+        }
 
-		public HttpStatus getStatus() {
-			return status;
-		}
+        public HttpStatus getStatus() {
+            return status;
+        }
 
-		public void setStatus(HttpStatus status) {
-			this.status = status;
-		}
+        public void setStatus(HttpStatus status) {
+            this.status = status;
+        }
 
-		public String getMessage() {
-			return message;
-		}
+        public String getMessage() {
+            return message;
+        }
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
+        public void setMessage(String message) {
+            this.message = message;
+        }
 
-		public RegularErrorResponseBuilder withStatus(HttpStatus status) {
-			this.status = status;
-			return this;
-		}
+        public RegularErrorResponseBuilder withStatus(HttpStatus status) {
+            this.status = status;
+            return this;
+        }
 
-		public RegularErrorResponseBuilder withMessage(String message) {
-			this.message = message;
-			return this;
-		}
+        public RegularErrorResponseBuilder withMessage(String message) {
+            this.message = message;
+            return this;
+        }
 
-		public RegularErrorResponse build() {
-			RegularErrorResponse regularErrorResponse = new RegularErrorResponse();
-			regularErrorResponse.status = this.status;
-			regularErrorResponse.message = this.message;
-			return regularErrorResponse;
-		}
-	}
+        public RegularErrorResponse build() {
+            RegularErrorResponse regularErrorResponse = new RegularErrorResponse();
+            regularErrorResponse.status = this.status;
+            regularErrorResponse.message = this.message;
+            return regularErrorResponse;
+        }
+    }
 }

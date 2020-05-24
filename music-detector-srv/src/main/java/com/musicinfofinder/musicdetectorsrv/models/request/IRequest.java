@@ -8,11 +8,11 @@ import java.net.URI;
 
 public interface IRequest {
 
-	HttpHeaders getHeaders();
+    HttpHeaders getHeaders();
 
-	URI getUri();
+    URI getUri();
 
-	MediaType getContentType();
+    MediaType getContentType();
 
-	MultiValueMap<String, String> getBody();
+    MultiValueMap<String, String> getBody();
 }

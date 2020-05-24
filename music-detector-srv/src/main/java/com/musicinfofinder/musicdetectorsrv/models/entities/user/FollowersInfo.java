@@ -5,22 +5,22 @@ package com.musicinfofinder.musicdetectorsrv.models.entities.user;
  * https://developer.spotify.com/documentation/web-api/reference/object-model/#followers-object
  */
 public class FollowersInfo {
-	private String href;
-	private int total;
+    private String href;
+    private int total;
 
-	public String getHref() {
-		return href;
-	}
+    public String getHref() {
+        return href;
+    }
 
-	public void setHref(String href) {
-		this.href = href;
-	}
+    public void setHref(String href) {
+        this.href = href;
+    }
 
-	public int getTotal() {
-		return total;
-	}
+    public int getTotal() {
+        return total;
+    }
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+    public void setTotal(int total) {
+        this.total = total;
+    }
 }

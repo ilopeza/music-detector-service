@@ -7,19 +7,19 @@ import org.springframework.http.HttpStatus;
  */
 public class AuthorizeException extends GeneralMusicDetectorException {
 
-	public AuthorizeException(String message, HttpStatus httpStatus) {
-		super(message, httpStatus);
-	}
+    public AuthorizeException(String message, HttpStatus httpStatus) {
+        super(message, httpStatus);
+    }
 
-	public AuthorizeException(String message, Throwable cause, HttpStatus httpStatus) {
-		super(message, cause, httpStatus);
-	}
+    public AuthorizeException(String message, Throwable cause, HttpStatus httpStatus) {
+        super(message, cause, httpStatus);
+    }
 
-	public AuthorizeException(String s) {
-		super(s);
-	}
+    public AuthorizeException(String s) {
+        super(s);
+    }
 
-	public AuthorizeException(String s, Throwable throwable) {
-		super(s, throwable);
-	}
+    public AuthorizeException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
 }

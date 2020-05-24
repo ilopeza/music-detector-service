@@ -12,12 +12,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/token")
 public class TokenController {
-	@Autowired
-	public ITokenService tokenService;
+    @Autowired
+    public ITokenService tokenService;
 
-	@RequestMapping("/refresh/{user}")
-	public Optional<TokenDTO> refreshToken(@PathVariable("user") String user) {
-		final TokenDTO tokenDTO = tokenService.refreshToken(user);
-		return Optional.of(tokenDTO);
-	}
+    @RequestMapping("/refresh/{user}")
+    public Optional<TokenDTO> refreshToken(@PathVariable("user") String user) {
+        final TokenDTO tokenDTO = tokenService.refreshToken(user);
+        return Optional.of(tokenDTO);
+    }
 }

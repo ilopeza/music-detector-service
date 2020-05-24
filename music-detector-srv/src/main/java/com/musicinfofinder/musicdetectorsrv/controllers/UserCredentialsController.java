@@ -14,16 +14,16 @@ import java.util.Optional;
 @RequestMapping("/credentials")
 public class UserCredentialsController {
 
-	@Autowired
-	private IUserCredentialsService userCredentialsService;
+    @Autowired
+    private IUserCredentialsService userCredentialsService;
 
-	@RequestMapping("/{user}")
-	public Optional<UserCredentialsDTO> getUserCredentials(@PathVariable("user") String user) {
-		Optional<UserCredentials> userCredentials = userCredentialsService.get(user);
-		if (userCredentials.isPresent()) {
-			UserCredentialsDTO userCredentialsDTO = UserCredentialsDTO.fromEntity(userCredentials.get());
-			return Optional.of(userCredentialsDTO);
-		}
-		return Optional.empty();
-	}
+    @RequestMapping("/{user}")
+    public Optional<UserCredentialsDTO> getUserCredentials(@PathVariable("user") String user) {
+        Optional<UserCredentials> userCredentials = userCredentialsService.get(user);
+        if (userCredentials.isPresent()) {
+            UserCredentialsDTO userCredentialsDTO = UserCredentialsDTO.fromEntity(userCredentials.get());
+            return Optional.of(userCredentialsDTO);
+        }
+        return Optional.empty();
+    }
 }
