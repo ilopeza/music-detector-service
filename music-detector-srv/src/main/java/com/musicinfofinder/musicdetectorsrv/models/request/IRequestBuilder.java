@@ -8,27 +8,27 @@ import org.springframework.util.MultiValueMap;
 import java.net.URI;
 
 public interface IRequestBuilder<SELF extends IRequestBuilder<SELF, T>, T extends AbstractRequest> {
-	SELF withScheme(final String protocol);
+    SELF withScheme(final String protocol);
 
-	SELF withHost(final String requestUri);
+    SELF withHost(final String requestUri);
 
-	SELF withPath(final String endpoint);
+    SELF withPath(final String endpoint);
 
-	SELF withHeader(final String name, final String value);
+    SELF withHeader(final String name, final String value);
 
-	SELF withBodyParameter(final String name, final String value);
+    SELF withBodyParameter(final String name, final String value);
 
-	SELF withQueryParam(final String name, final String value);
+    SELF withQueryParam(final String name, final String value);
 
-	SELF withContentType(final MediaType mediaType);
+    SELF withContentType(final MediaType mediaType);
 
-	T build() throws MalformedRequestException;
+    T build() throws MalformedRequestException;
 
-	URI buildUri();
+    URI buildUri();
 
-	MultiValueMap<String, String> getBody();
+    MultiValueMap<String, String> getBody();
 
-	HttpHeaders getHeaders();
+    HttpHeaders getHeaders();
 
-	MediaType getContentType();
+    MediaType getContentType();
 }

@@ -10,7 +10,6 @@ import com.musicinfofinder.musicdetectorsrv.models.request.user.UserRequestBuild
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
 import com.musicinfofinder.musicdetectorsrv.repository.IUserRepository;
 import com.musicinfofinder.musicdetectorsrv.services.authorization.ITokenService;
-import com.musicinfofinder.musicdetectorsrv.services.credentials.IUserCredentialsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -27,46 +26,46 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Service
 public class UserServiceImpl implements IUserService {
-	@Autowired
-	RestTemplate restTemplate;
+    @Autowired
+    RestTemplate restTemplate;
 
-	@Autowired
-	IUserRepository userRepository;
+    @Autowired
+    IUserRepository userRepository;
 
-	@Autowired
-	ITokenService tokenService;
+    @Autowired
+    ITokenService tokenService;
 
-	@Override
-	public UserDTO requestCurrent(String userId) throws RestClientException, MalformedRequestException {
-		String token = tokenService.getTokenForUser(userId);
-		UserRequest userRequest = UserRequestBuilder.getRequestBuilder(token)
-						.build();
-		HttpEntity<Object> requestEntity = new HttpEntity<>(userRequest.getBody(), userRequest.getHeaders());
-		ResponseEntity<UserDTO> responseEntity = restTemplate.exchange(userRequest.getUri(), HttpMethod.GET,
-						requestEntity, UserDTO.class);
-		final UserDTO user = responseEntity.getBody();
+    @Override
+    public UserDTO requestCurrent(String userId) throws RestClientException, MalformedRequestException {
+        String token = tokenService.getTokenForUser(userId);
+        UserRequest userRequest = UserRequestBuilder.getRequestBuilder(token)
+                .build();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(userRequest.getBody(), userRequest.getHeaders());
+        ResponseEntity<UserDTO> responseEntity = restTemplate.exchange(userRequest.getUri(), HttpMethod.GET,
+                requestEntity, UserDTO.class);
+        final UserDTO user = responseEntity.getBody();
 
-		return user;
-	}
+        return user;
+    }
 
-	@Override
-	public UserDTO save(User user) throws UserException {
-		if (isNull(user)) {
-			throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
-		}
-		final UserDTO savedUser = UserDTO.UserDTOBuilder.anUserDTO().fromEntity(userRepository.save(user));
-		return savedUser;
-	}
+    @Override
+    public UserDTO save(User user) throws UserException {
+        if (isNull(user)) {
+            throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
+        }
+        final UserDTO savedUser = UserDTO.UserDTOBuilder.anUserDTO().fromEntity(userRepository.save(user));
+        return savedUser;
+    }
 
-	@Override
-	public Optional<UserDTO> get(String id) throws UserException {
-		if (isBlank(id)) {
-			throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
-		}
-		final User user = userRepository.findById(id)
-				.orElseThrow(() -> new UserNotFoundException("User with id " + id + " was not found"));
-		final UserDTO userDTO = UserDTO.UserDTOBuilder.anUserDTO()
-						.fromEntity(user);
-		return Optional.of(userDTO);
-	}
+    @Override
+    public Optional<UserDTO> get(String id) throws UserException {
+        if (isBlank(id)) {
+            throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
+        }
+        final User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " was not found"));
+        final UserDTO userDTO = UserDTO.UserDTOBuilder.anUserDTO()
+                .fromEntity(user);
+        return Optional.of(userDTO);
+    }
 }

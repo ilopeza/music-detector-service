@@ -19,24 +19,24 @@ import static java.util.Objects.isNull;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-	private final static Logger logger = LogManager.getLogger(UserController.class);
+    private final static Logger logger = LogManager.getLogger(UserController.class);
 
-	@Autowired
-	IUserService userService;
+    @Autowired
+    IUserService userService;
 
-	@GetMapping("/current/{userId}")
-	public Optional<UserDTO> getCurrentUser(@PathVariable("userId") String userId) {
-		final UserDTO currentUser = userService.requestCurrent(userId);
-		if (isNull(currentUser)) {
-			logger.error("Could not get information for current user with id {}", userId);
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not get the information for the current user");
-		}
-		userService.save(currentUser.toEntity());
-		return Optional.of(currentUser);
-	}
+    @GetMapping("/current/{userId}")
+    public Optional<UserDTO> getCurrentUser(@PathVariable("userId") String userId) {
+        final UserDTO currentUser = userService.requestCurrent(userId);
+        if (isNull(currentUser)) {
+            logger.error("Could not get information for current user with id {}", userId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not get the information for the current user");
+        }
+        userService.save(currentUser.toEntity());
+        return Optional.of(currentUser);
+    }
 
-	@GetMapping("/{userId}")
-	public Optional<UserDTO> findUserById(@PathVariable("userId") String userId) {
-		return userService.get(userId);
-	}
+    @GetMapping("/{userId}")
+    public Optional<UserDTO> findUserById(@PathVariable("userId") String userId) {
+        return userService.get(userId);
+    }
 }

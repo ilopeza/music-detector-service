@@ -6,11 +6,11 @@ import com.musicinfofinder.musicdetectorsrv.models.request.IRequestBuilder;
 
 public class UserRequest extends AbstractRequest {
 
-	public UserRequest(IRequestBuilder builder) {
-		super(builder);
-	}
+    public UserRequest(IRequestBuilder builder) {
+        super(builder);
+    }
 
-	@Override
-	protected void validate() throws MalformedRequestException {
-	}
+    @Override
+    protected void validate() throws MalformedRequestException {
+    }
 }

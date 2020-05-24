@@ -17,29 +17,29 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class TokenRequest extends AbstractRequest {
 
-	public TokenRequest(IRequestBuilder builder) {
-		super(builder);
-	}
+    public TokenRequest(IRequestBuilder builder) {
+        super(builder);
+    }
 
-	@Override
-	protected void validate() throws MalformedRequestException {
-		//validate uri
-		final URI uri = getUri();
-		if (!equalsIgnoreCase(uri.getScheme(), HTTPS)) {
-			throw new MalformedRequestException("Scheme " + uri.getScheme() + " is not valid. Should be " + HTTPS);
-		}
-		if (!equalsIgnoreCase(uri.getPath(), "/" + TOKEN_PATH)) {
-			throw new MalformedRequestException("Path " + uri.getPath() + " is not valid. Should be " + TOKEN_PATH);
-		}
-		if (!equalsIgnoreCase(uri.getHost(), ACCOUNTS_SPOTIFY_HOST)) {
-			throw new MalformedRequestException("Host " + uri.getHost() + " is not valid. Should be " + ACCOUNTS_SPOTIFY_HOST);
-		}
-		//headers
-		final HttpHeaders headers = getHeaders();
-		if (isNull(headers)
-						|| !headers.containsKey(AUTHORIZATION_HEADER)
-						|| isEmpty(headers.get(AUTHORIZATION_HEADER).get(0))) {
-			throw new MalformedRequestException("Authorization header is required");
-		}
-	}
+    @Override
+    protected void validate() throws MalformedRequestException {
+        //validate uri
+        final URI uri = getUri();
+        if (!equalsIgnoreCase(uri.getScheme(), HTTPS)) {
+            throw new MalformedRequestException("Scheme " + uri.getScheme() + " is not valid. Should be " + HTTPS);
+        }
+        if (!equalsIgnoreCase(uri.getPath(), "/" + TOKEN_PATH)) {
+            throw new MalformedRequestException("Path " + uri.getPath() + " is not valid. Should be " + TOKEN_PATH);
+        }
+        if (!equalsIgnoreCase(uri.getHost(), ACCOUNTS_SPOTIFY_HOST)) {
+            throw new MalformedRequestException("Host " + uri.getHost() + " is not valid. Should be " + ACCOUNTS_SPOTIFY_HOST);
+        }
+        //headers
+        final HttpHeaders headers = getHeaders();
+        if (isNull(headers)
+                || !headers.containsKey(AUTHORIZATION_HEADER)
+                || isEmpty(headers.get(AUTHORIZATION_HEADER).get(0))) {
+            throw new MalformedRequestException("Authorization header is required");
+        }
+    }
 }

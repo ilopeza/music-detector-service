@@ -1,6 +1,5 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
-import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCredentials;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserCredentialsDTO;
@@ -19,30 +18,30 @@ import java.util.Optional;
 
 @RestController
 public class AuthorizationController {
-	private final static Logger logger = LogManager.getLogger(AuthorizationController.class);
+    private final static Logger logger = LogManager.getLogger(AuthorizationController.class);
 
-	@Autowired
-	private IAuthorizationService authorizationService;
-	@Autowired
-	private ITokenService tokenService;
-	@Autowired
-	private IUserCredentialsService userCredentialsService;
-	@Autowired
-	private IUserService userService;
+    @Autowired
+    private IAuthorizationService authorizationService;
+    @Autowired
+    private ITokenService tokenService;
+    @Autowired
+    private IUserCredentialsService userCredentialsService;
+    @Autowired
+    private IUserService userService;
 
-	@RequestMapping("/authorize")
-	public void authorize() {
-		authorizationService.authorize();
-	}
+    @RequestMapping("/authorize")
+    public void authorize() {
+        authorizationService.authorize();
+    }
 
-	@RequestMapping("/postAuthorize")
-	public Optional<UserCredentialsDTO> postAuthorize(AuthorizationDTO authResponse) {
-		final TokenDTO tokenDTO = tokenService.requestToken(authResponse.getCode());
-		final UserDTO currentUser = userService.requestCurrent(tokenDTO.getAccessToken());
-		userService.save(currentUser.toEntity());
-		final UserCredentialsDTO userCredentials = userCredentialsService
-						.save(currentUser.getId(), authResponse.getCode(), tokenDTO);
+    @RequestMapping("/postAuthorize")
+    public Optional<UserCredentialsDTO> postAuthorize(AuthorizationDTO authResponse) {
+        final TokenDTO tokenDTO = tokenService.requestToken(authResponse.getCode());
+        final UserDTO currentUser = userService.requestCurrent(tokenDTO.getAccessToken());
+        userService.save(currentUser.toEntity());
+        final UserCredentialsDTO userCredentials = userCredentialsService
+                .save(currentUser.getId(), authResponse.getCode(), tokenDTO);
 
-		return Optional.of(userCredentials);
-	}
+        return Optional.of(userCredentials);
+    }
 }

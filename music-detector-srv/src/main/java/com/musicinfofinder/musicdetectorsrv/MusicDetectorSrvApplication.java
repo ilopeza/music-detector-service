@@ -14,16 +14,16 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class MusicDetectorSrvApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MusicDetectorSrvApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MusicDetectorSrvApplication.class, args);
+    }
 
-	@Bean
-	public RestTemplate getRestTemplate() {
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-		factory.setConnectTimeout(3000);
-		RestTemplate restTemplate = new RestTemplate(factory);
-		return restTemplate;
-	}
+    @Bean
+    public RestTemplate getRestTemplate() {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(3000);
+        RestTemplate restTemplate = new RestTemplate(factory);
+        return restTemplate;
+    }
 
 }
