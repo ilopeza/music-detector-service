@@ -26,7 +26,7 @@ public interface IUserService {
      * @return UserDTO with the updated information
      * @throws UserException If the param is empty or not valid
      */
-    UserDTO save(User user) throws UserException;
+    User save(User user) throws UserException;
 
     /**
      * Finds the user by id in the database.
@@ -35,5 +35,5 @@ public interface IUserService {
      * @return UserDTO if present. If not, will return empty
      * @throws UserException If the param is null or empty.
      */
-    Optional<UserDTO> get(String id) throws UserException;
+    Optional<User> get(String id) throws UserException;
 }

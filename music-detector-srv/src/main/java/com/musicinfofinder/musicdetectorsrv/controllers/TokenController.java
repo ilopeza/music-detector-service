@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
+import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import com.musicinfofinder.musicdetectorsrv.services.authorization.ITokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class TokenController {
 
     @RequestMapping("/refresh/{user}")
     public Optional<TokenDTO> refreshToken(@PathVariable("user") String user) {
-        final TokenDTO tokenDTO = tokenService.refreshToken(user);
-        return Optional.of(tokenDTO);
+        final Token token = tokenService.refreshToken(user);
+        return Optional.of(new TokenDTO(token));
     }
 }

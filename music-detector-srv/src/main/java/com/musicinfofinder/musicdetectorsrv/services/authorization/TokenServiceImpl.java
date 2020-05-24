@@ -4,6 +4,7 @@ import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizationSpotifyRestA
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.InvalidParameterException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
+import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCredentials;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.RefreshTokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequest;
@@ -38,7 +39,7 @@ public class TokenServiceImpl implements ITokenService {
     private String secretClient;
 
     @Override
-    public TokenDTO requestToken(String code) throws AuthorizeException, MalformedRequestException {
+    public Token requestToken(String code) throws AuthorizeException, MalformedRequestException {
         if (isBlank(code)) {
             throw new InvalidParameterException("The application code is required to get the token.", HttpStatus.BAD_REQUEST);
         }
@@ -53,11 +54,12 @@ public class TokenServiceImpl implements ITokenService {
         } catch (RestClientException exception) {
             throw new AuthorizationSpotifyRestApiException(exception);
         }
-        return responseEntity.getBody();
+        Token body = new Token(responseEntity.getBody());
+        return body;
     }
 
     @Override
-    public TokenDTO refreshToken(String userId) {
+    public Token refreshToken(String userId) {
         if (isBlank(userId)) {
             throw new InvalidParameterException("User id is required to refresh the token.", HttpStatus.BAD_REQUEST);
         }
@@ -66,7 +68,7 @@ public class TokenServiceImpl implements ITokenService {
                 .orElseThrow(() -> new AuthorizeException("Could not get credentials for user with id " + userId,
                         HttpStatus.UNAUTHORIZED));
         //call spotify api to refresh token
-        final TokenDTO refreshedToken = requestRefreshToken(userCredentials.getRefreshToken());
+        final Token refreshedToken = requestRefreshToken(userCredentials.getRefreshToken());
         //set new token and expire date
         updateCurrentUserCredentials(userCredentials, refreshedToken);
         return refreshedToken;
@@ -78,14 +80,14 @@ public class TokenServiceImpl implements ITokenService {
      * @param userCredentials
      * @param refreshedToken
      */
-    private void updateCurrentUserCredentials(UserCredentials userCredentials, TokenDTO refreshedToken) {
+    private void updateCurrentUserCredentials(UserCredentials userCredentials, Token refreshedToken) {
         userCredentials.refreshToken(refreshedToken.getAccessToken(), refreshedToken.getExpiresIn());
         //update the values in the db
         userCredentialsService.save(userCredentials);
     }
 
     @Override
-    public TokenDTO requestRefreshToken(String refreshToken) throws AuthorizeException, MalformedRequestException {
+    public Token requestRefreshToken(String refreshToken) throws AuthorizeException, MalformedRequestException {
         final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
                 .withRefreshToken(refreshToken)
                 .build();
@@ -98,7 +100,8 @@ public class TokenServiceImpl implements ITokenService {
         } catch (RestClientException exception) {
             throw new AuthorizationSpotifyRestApiException(exception);
         }
-        return responseEntity.getBody();
+        Token body = new Token(responseEntity.getBody());
+        return body;
     }
 
     @Override
@@ -109,7 +112,7 @@ public class TokenServiceImpl implements ITokenService {
         if (isTokenValid(userCredentials)) {
             return userCredentials.getToken();
         }
-        TokenDTO token = refreshToken(userId);
+        Token token = refreshToken(userId);
         return token.getAccessToken();
     }
 

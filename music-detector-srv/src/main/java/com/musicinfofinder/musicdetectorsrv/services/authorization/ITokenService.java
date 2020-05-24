@@ -2,6 +2,7 @@ package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
+import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 
 /**
@@ -17,7 +18,7 @@ public interface ITokenService {
      * @throws AuthorizeException
      * @throws MalformedRequestException
      */
-    TokenDTO requestToken(String code) throws AuthorizeException, MalformedRequestException;
+    Token requestToken(String code) throws AuthorizeException, MalformedRequestException;
 
     /**
      * Will refresh token and update the information stored for the credentials.
@@ -26,7 +27,7 @@ public interface ITokenService {
      * @return
      * @throws AuthorizeException
      */
-    TokenDTO refreshToken(String userId) throws AuthorizeException;
+    Token refreshToken(String userId) throws AuthorizeException;
 
     /**
      * Calls to Spotify API /token with the appropriate parameters to get a new token.
@@ -36,7 +37,7 @@ public interface ITokenService {
      * @throws AuthorizeException
      * @throws MalformedRequestException
      */
-    TokenDTO requestRefreshToken(String token) throws AuthorizeException, MalformedRequestException;
+    Token requestRefreshToken(String token) throws AuthorizeException, MalformedRequestException;
 
     /**
      * Get the token stored for the user. If the token is not valid, request the spotify api to refresh the token. If the

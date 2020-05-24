@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.controllers;
 
+import com.musicinfofinder.musicdetectorsrv.models.entities.user.User;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
 import com.musicinfofinder.musicdetectorsrv.services.user.IUserService;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +38,9 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public Optional<UserDTO> findUserById(@PathVariable("userId") String userId) {
-        return userService.get(userId);
+        Optional<User> user = userService.get(userId);
+        UserDTO userDTO = UserDTO.UserDTOBuilder.anUserDTO()
+                .fromEntity(user.get());
+        return Optional.of(userDTO);
     }
 }

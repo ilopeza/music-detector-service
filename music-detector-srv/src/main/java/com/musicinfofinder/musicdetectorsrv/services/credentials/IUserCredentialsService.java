@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.services.credentials;
 
+import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCredentials;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserCredentialsDTO;
@@ -17,9 +18,9 @@ public interface IUserCredentialsService {
      * @return credentials of the user.
      * @throws IllegalArgumentException if any of the params is empty
      */
-    UserCredentialsDTO save(String userId, String code, TokenDTO token);
+    UserCredentials save(String userId, String code, Token token);
 
-    UserCredentialsDTO save(UserCredentials userCredentials);
+    UserCredentials save(UserCredentials userCredentials);
 
     /**
      * Retrieves the credentials for the user specified in the params

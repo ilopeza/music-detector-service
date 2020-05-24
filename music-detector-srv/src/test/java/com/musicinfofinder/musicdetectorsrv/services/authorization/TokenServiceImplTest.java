@@ -2,6 +2,7 @@ package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.InvalidParameterException;
+import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCredentials;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequestBuilder;
@@ -40,19 +41,7 @@ class TokenServiceImplTest {
     UserCredentials userCredentials;
 
     @Mock
-    UserCredentialsDTO userCredentialsDTO;
-
-    @Mock
-    TokenDTO token;
-
-    @Mock
     TokenDTO refreshToken;
-
-    @Mock
-    TokenRequestBuilder tokenRequestBuilder;
-
-    @Mock
-    TokenRequest tokenRequest;
 
     @Mock
     RestTemplate restTemplate;
@@ -107,7 +96,7 @@ class TokenServiceImplTest {
                 .thenReturn(responseEntity);
         when(refreshToken.getAccessToken()).thenReturn(NEW_TOKEN);
         when(refreshToken.getExpiresIn()).thenReturn(3600);
-        when(userCredentialsService.save(any(UserCredentials.class))).thenReturn(userCredentialsDTO);
+        when(userCredentialsService.save(any(UserCredentials.class))).thenReturn(userCredentials);
 
         String tokenForUser = tokenService.getTokenForUser(USER_ID);
 
@@ -123,10 +112,10 @@ class TokenServiceImplTest {
                 .thenReturn(responseEntity);
         when(refreshToken.getAccessToken()).thenReturn(NEW_TOKEN);
         when(refreshToken.getRefreshToken()).thenReturn(REFRESH_TOKEN);
-        when(refreshToken.getExpiresIn()).thenReturn(3600);
-        when(userCredentialsService.save(any(UserCredentials.class))).thenReturn(userCredentialsDTO);
+        when(refreshToken.getExpiresIn()).thenReturn(EXPIRES_IN);
+        when(userCredentialsService.save(any(UserCredentials.class))).thenReturn(userCredentials);
 
-        final TokenDTO tokenDTO = tokenService.refreshToken(USER_ID);
+        final Token tokenDTO = tokenService.refreshToken(USER_ID);
 
         assertEquals(REFRESH_TOKEN, tokenDTO.getRefreshToken());
         assertEquals(NEW_TOKEN, tokenDTO.getAccessToken());

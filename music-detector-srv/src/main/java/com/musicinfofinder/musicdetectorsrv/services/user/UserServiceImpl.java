@@ -49,23 +49,20 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDTO save(User user) throws UserException {
+    public User save(User user) throws UserException {
         if (isNull(user)) {
             throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
         }
-        final UserDTO savedUser = UserDTO.UserDTOBuilder.anUserDTO().fromEntity(userRepository.save(user));
-        return savedUser;
+        return userRepository.save(user);
     }
 
     @Override
-    public Optional<UserDTO> get(String id) throws UserException {
+    public Optional<User> get(String id) throws UserException {
         if (isBlank(id)) {
             throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
         }
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " was not found"));
-        final UserDTO userDTO = UserDTO.UserDTOBuilder.anUserDTO()
-                .fromEntity(user);
-        return Optional.of(userDTO);
+        return Optional.of(user);
     }
 }

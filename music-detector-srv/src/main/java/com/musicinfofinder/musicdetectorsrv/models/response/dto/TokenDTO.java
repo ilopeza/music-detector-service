@@ -3,6 +3,7 @@ package com.musicinfofinder.musicdetectorsrv.models.response.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 
 @JsonInclude(Include.NON_NULL)
 public class TokenDTO {
@@ -18,6 +19,14 @@ public class TokenDTO {
     private String refreshToken;
 
     public TokenDTO() {
+    }
+
+    public TokenDTO(Token token) {
+        this.accessToken = token.getAccessToken();
+        this.tokenType = token.getTokenType();
+        this.scope = token.getScope();
+        this.expiresIn = token.getExpiresIn();
+        this.refreshToken = token.getRefreshToken();
     }
 
     public String getAccessToken() {
