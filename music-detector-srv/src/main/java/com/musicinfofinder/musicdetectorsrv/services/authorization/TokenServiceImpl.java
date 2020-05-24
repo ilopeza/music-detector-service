@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -62,11 +62,9 @@ public class TokenServiceImpl implements ITokenService {
 			throw new InvalidParameterException("User id is required to refresh the token.", HttpStatus.BAD_REQUEST);
 		}
 		//get credentials from db
-		final Optional<UserCredentials> optionalUserCredentials = userCredentialsRepository.findById(userId);
-		if (!optionalUserCredentials.isPresent()) {
-			throw new InvalidParameterException("User with id " + userId + " is not registered. The user should register first.");
-		}
-		final UserCredentials userCredentials = optionalUserCredentials.get();
+		UserCredentials userCredentials = userCredentialsRepository.findById(userId)
+				.orElseThrow(() -> new AuthorizeException("Could not get credentials for user with id " + userId,
+						HttpStatus.UNAUTHORIZED));
 		//call spotify api to refresh token
 		final TokenDTO refreshedToken = requestRefreshToken(userCredentials.getRefreshToken());
 		//set new token and expire date
@@ -101,5 +99,23 @@ public class TokenServiceImpl implements ITokenService {
 			throw new AuthorizationSpotifyRestApiException(exception);
 		}
 		return responseEntity.getBody();
+	}
+
+    @Override
+	public String getTokenForUser(String userId) {
+		UserCredentials userCredentials = userCredentialsRepository.findById(userId)
+				.orElseThrow(() -> new AuthorizeException("Could not get credentials for user with id " + userId,
+						HttpStatus.UNAUTHORIZED));
+		if (isTokenValid(userCredentials)) {
+			return userCredentials.getToken();
+		}
+		TokenDTO token = refreshToken(userId);
+		return token.getAccessToken();
+	}
+
+	private boolean isTokenValid(UserCredentials userCredentials) {
+		LocalDateTime expireDate = userCredentials
+				.getExpireDate();
+		return LocalDateTime.now().isAfter(expireDate);
 	}
 }

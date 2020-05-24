@@ -12,12 +12,12 @@ public interface IUserService {
 	/**
 	 * Makes a request to Spotify API to get the current user
 	 *
-	 * @param token
+	 * @param userId Spotify ID of the user
 	 * @return Current user logged in Spotify app.
 	 * @throws RestClientException       Will throw if the request fails.
 	 * @throws MalformedRequestException Will throw if the request does not pass validation
 	 */
-	UserDTO requestCurrent(String token) throws RestClientException, MalformedRequestException;
+	UserDTO requestCurrent(String userId) throws RestClientException, MalformedRequestException;
 
 	/**
 	 * Saves user in database and returns the UserDTO.

@@ -36,4 +36,12 @@ public interface ITokenService {
 	 * @throws MalformedRequestException
 	 */
 	TokenDTO requestRefreshToken(String token) throws AuthorizeException, MalformedRequestException;
+
+	/**
+	 * Get the token stored for the user. If the token is not valid, request the spotify api to refresh the token. If the
+	 * user credentials are not found, will throw an exception with the UNAUTHORIZED status.
+	 * @param userId Id of the user
+	 * @return String with the token stored o the new one from the api
+	 */
+	String getTokenForUser(String userId);
 }

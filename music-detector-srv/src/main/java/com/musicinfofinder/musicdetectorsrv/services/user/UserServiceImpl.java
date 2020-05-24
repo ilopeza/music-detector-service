@@ -9,6 +9,8 @@ import com.musicinfofinder.musicdetectorsrv.models.request.user.UserRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.user.UserRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserDTO;
 import com.musicinfofinder.musicdetectorsrv.repository.IUserRepository;
+import com.musicinfofinder.musicdetectorsrv.services.authorization.ITokenService;
+import com.musicinfofinder.musicdetectorsrv.services.credentials.IUserCredentialsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,9 +33,12 @@ public class UserServiceImpl implements IUserService {
 	@Autowired
 	IUserRepository userRepository;
 
+	@Autowired
+	ITokenService tokenService;
+
 	@Override
-	public UserDTO requestCurrent(String token) throws RestClientException, MalformedRequestException {
-		//TODO: SHOOULD GET THE TOKEN
+	public UserDTO requestCurrent(String userId) throws RestClientException, MalformedRequestException {
+		String token = tokenService.getTokenForUser(userId);
 		UserRequest userRequest = UserRequestBuilder.getRequestBuilder(token)
 						.build();
 		HttpEntity<Object> requestEntity = new HttpEntity<>(userRequest.getBody(), userRequest.getHeaders());
@@ -58,12 +63,10 @@ public class UserServiceImpl implements IUserService {
 		if (isBlank(id)) {
 			throw new InvalidParameterException("User can not be null", HttpStatus.BAD_REQUEST);
 		}
-		final Optional<User> optionalUser = userRepository.findById(id);
-		if (!optionalUser.isPresent()) {
-			throw new UserNotFoundException("User with id " + id + " was not found");
-		}
+		final User user = userRepository.findById(id)
+				.orElseThrow(() -> new UserNotFoundException("User with id " + id + " was not found"));
 		final UserDTO userDTO = UserDTO.UserDTOBuilder.anUserDTO()
-						.fromEntity(optionalUser.get());
+						.fromEntity(user);
 		return Optional.of(userDTO);
 	}
 }
