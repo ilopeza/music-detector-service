@@ -84,6 +84,8 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
         return contentType;
     }
 
+
+
     @Override
     public URI buildUri() {
         final UriComponents uriComponents = UriComponentsBuilder.newInstance()

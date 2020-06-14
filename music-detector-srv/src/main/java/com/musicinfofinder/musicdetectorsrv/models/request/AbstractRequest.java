@@ -10,7 +10,6 @@ import java.net.URI;
 
 public abstract class AbstractRequest implements IRequest {
     private final MultiValueMap<String, String> queryParams;
-    //TODO: SHOULD ADD QUERYPARAMS TO THE ABSTRACT FATHER AND REMOVE EXTRA FUNC FROM THE CHILDREN
     //TODO: SHOULD SUPPORT MULTIPLE PROTOCOLS
     private URI uri;
     private HttpHeaders headers;
