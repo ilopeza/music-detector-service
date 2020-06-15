@@ -1,17 +1,10 @@
 package com.musicinfofinder.musicdetectorsrv.models.response.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class Restriction {
-
     @JsonProperty("reason")
     private String reason;
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
 }

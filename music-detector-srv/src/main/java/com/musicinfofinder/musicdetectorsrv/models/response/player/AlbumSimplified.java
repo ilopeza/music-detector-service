@@ -3,6 +3,7 @@ package com.musicinfofinder.musicdetectorsrv.models.response.player;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.musicinfofinder.musicdetectorsrv.models.response.commons.ExternalUrl;
 import com.musicinfofinder.musicdetectorsrv.models.response.commons.Image;
+import lombok.Data;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  *
  * @see //developer.spotify.com/documentation/web-api/reference/object-model/#album-object-simplified
  */
+@Data
 public class AlbumSimplified {
     @JsonProperty("album_group")
     private String albumGroup;// The field is present when getting an artist’s albums. Possible values are “album”, “single”, “compilation”, “appears_on”. Compare to album_type this field represents relationship between the artist and the album.
@@ -38,108 +40,4 @@ public class AlbumSimplified {
     private ObjectTypeEnum type;    //The object type: “album”
     @JsonProperty("uri")
     private String uri;//The Spotify URI for the album.
-
-    public String getAlbumGroup() {
-        return albumGroup;
-    }
-
-    public void setAlbumGroup(String albumGroup) {
-        this.albumGroup = albumGroup;
-    }
-
-    public AlbumTypeEnum getAlbumType() {
-        return albumType;
-    }
-
-    public void setAlbumType(AlbumTypeEnum albumType) {
-        this.albumType = albumType;
-    }
-
-    public List<ArtistSimplified> getArtists() {
-        return artists;
-    }
-
-    public void setArtists(List<ArtistSimplified> artists) {
-        this.artists = artists;
-    }
-
-    public List<String> getAvailableMarkets() {
-        return availableMarkets;
-    }
-
-    public void setAvailableMarkets(List<String> availableMarkets) {
-        this.availableMarkets = availableMarkets;
-    }
-
-    public ExternalUrl getExternalUrls() {
-        return externalUrls;
-    }
-
-    public void setExternalUrls(ExternalUrl externalUrls) {
-        this.externalUrls = externalUrls;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public String getReleaseDatePrecision() {
-        return releaseDatePrecision;
-    }
-
-    public void setReleaseDatePrecision(String releaseDatePrecision) {
-        this.releaseDatePrecision = releaseDatePrecision;
-    }
-
-    public ObjectTypeEnum getType() {
-        return type;
-    }
-
-    public void setType(ObjectTypeEnum type) {
-        this.type = type;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
 }
