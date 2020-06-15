@@ -4,8 +4,6 @@ import com.musicinfofinder.musicdetectorsrv.exceptions.InvalidParameterException
 import com.musicinfofinder.musicdetectorsrv.exceptions.UserNotFoundException;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCredentials;
-import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
-import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserCredentialsDTO;
 import com.musicinfofinder.musicdetectorsrv.repository.IUserCredentialsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

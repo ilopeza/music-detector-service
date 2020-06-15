@@ -12,13 +12,13 @@ public class CurrentPlayingRequestBuilder extends AbstractRequestBuilder<Current
     public static final String API_SPOTIFY_HOST = "api.spotify.com";
     public static final String CURRENT_PLAYING_PATH = "v1/me/player/currently-playing";
 
-    public static CurrentPlayingRequestBuilder getRequestBuilder(String token) {
-        return new CurrentPlayingRequestBuilder(token);
-    }
-
     private CurrentPlayingRequestBuilder(String token) {
         super();
         withHeader("Authorization", "Bearer " + token);
+    }
+
+    public static CurrentPlayingRequestBuilder getRequestBuilder(String token) {
+        return new CurrentPlayingRequestBuilder(token);
     }
 
     public CurrentPlayingRequestBuilder withMarket(String market) {

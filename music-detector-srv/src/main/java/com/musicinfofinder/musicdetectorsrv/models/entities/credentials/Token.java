@@ -1,6 +1,5 @@
 package com.musicinfofinder.musicdetectorsrv.models.entities.credentials;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

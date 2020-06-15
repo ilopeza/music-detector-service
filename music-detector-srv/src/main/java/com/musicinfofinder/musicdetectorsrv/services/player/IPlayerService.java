@@ -9,6 +9,7 @@ public interface IPlayerService {
 
     /**
      * Get the User's Currently Playing Track
+     *
      * @param userId current user id
      * @return CurrentPlaying which can be a track or an episode
      */

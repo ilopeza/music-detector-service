@@ -7,8 +7,6 @@ import com.musicinfofinder.musicdetectorsrv.models.request.authorization.Authori
 import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
