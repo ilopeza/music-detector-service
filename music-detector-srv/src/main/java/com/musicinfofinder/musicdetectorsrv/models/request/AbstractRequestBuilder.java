@@ -85,7 +85,6 @@ public abstract class AbstractRequestBuilder<SELF extends IRequestBuilder<SELF, 
     }
 
 
-
     @Override
     public URI buildUri() {
         final UriComponents uriComponents = UriComponentsBuilder.newInstance()

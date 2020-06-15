@@ -2,8 +2,6 @@ package com.musicinfofinder.musicdetectorsrv.services.credentials;
 
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCredentials;
-import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
-import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserCredentialsDTO;
 
 import java.util.Optional;
 

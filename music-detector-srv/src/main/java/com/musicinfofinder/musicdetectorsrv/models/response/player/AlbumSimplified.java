@@ -14,6 +14,8 @@ import java.util.List;
  */
 @Data
 public class AlbumSimplified {
+    @JsonProperty("images")
+    List<Image> images; //The cover art for the album in various sizes, widest first.
     @JsonProperty("album_group")
     private String albumGroup;// The field is present when getting an artist’s albums. Possible values are “album”, “single”, “compilation”, “appears_on”. Compare to album_type this field represents relationship between the artist and the album.
     @JsonProperty("album_type")
@@ -28,8 +30,6 @@ public class AlbumSimplified {
     private String href; //A link to the Web API endpoint providing full details of the album.
     @JsonProperty("id")
     private String id; //The Spotify ID for the album.
-    @JsonProperty("images")
-    List<Image> images; //The cover art for the album in various sizes, widest first.
     @JsonProperty("name")
     private String name; //The name of the album. In case of an album takedown, the value may be an empty string.
     @JsonProperty("release_date")

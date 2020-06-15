@@ -3,7 +3,6 @@ package com.musicinfofinder.musicdetectorsrv.services.authorization;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
 import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.Token;
-import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 
 /**
  * Service to interact with the Spotify token API
