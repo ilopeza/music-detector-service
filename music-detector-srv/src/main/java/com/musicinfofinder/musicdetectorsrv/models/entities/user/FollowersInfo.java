@@ -1,26 +1,14 @@
 package com.musicinfofinder.musicdetectorsrv.models.entities.user;
 
+import lombok.Data;
+
 /**
  * Contains information about the user's followers.
- * https://developer.spotify.com/documentation/web-api/reference/object-model/#followers-object
+ *
+ * @see :https://developer.spotify.com/documentation/web-api/reference/object-model/#followers-object
  */
+@Data
 public class FollowersInfo {
     private String href;
     private int total;
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
-    }
 }

@@ -6,6 +6,7 @@ import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException
 import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ import java.net.URI;
 import java.util.Arrays;
 
 @Service
+@Slf4j
 public class AuthorizationServiceImpl implements IAuthorizationService {
 
-    private final static Logger logger = LogManager.getLogger(AuthorizationServiceImpl.class);
     private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
     @Autowired
     ITokenService tokenService;
@@ -42,7 +43,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
                 //.withState(STATE)
                 .build();
         final URI uri = request.getUri();
-        logger.info("The uri to be opened is {}", uri.toString());
+        log.info("The uri to be opened is {}", uri.toString());
         openInBrowser(uri);
     }
 
@@ -58,7 +59,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
             try {
                 Desktop.getDesktop().browse(url);
             } catch (IOException exception) {
-                logger.info("Cannot open browser with Desktop since it is not supported. Trying to open thru CLI", exception);
+                log.error("Cannot open browser with Desktop since it is not supported. Trying to open thru CLI", exception);
             }
         }
         String os = System.getProperty("os.name").toLowerCase();
@@ -95,7 +96,9 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
 
     @Override
     public String postAuthorize(AuthorizationDTO response) throws AuthorizeException, MalformedRequestException {
+        log.debug("Starting call to post authorize with authorization {}", response);
         if (response.hasError()) {
+            log.error("User not authorized with credentials {}", response);
             throw new AuthorizeException("The user has not authorized the application", HttpStatus.UNAUTHORIZED);
         }
         /**if (!response.isValidState(STATE)) {
@@ -103,7 +106,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
          }**/
 
         String code = response.getCode();
-        logger.info("Response code is {}", code);
+        log.info("Response code is {}", code);
         return tokenService.requestToken(code).getAccessToken();
     }
 }

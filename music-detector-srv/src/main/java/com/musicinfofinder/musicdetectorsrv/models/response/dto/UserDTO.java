@@ -4,15 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.musicinfofinder.musicdetectorsrv.enums.ObjectType;
 import com.musicinfofinder.musicdetectorsrv.enums.ProductEnum;
 import com.musicinfofinder.musicdetectorsrv.models.entities.user.User;
-import com.musicinfofinder.musicdetectorsrv.models.entities.user.UserImage;
+import com.musicinfofinder.musicdetectorsrv.models.response.commons.Image;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
 /**
  * User response object.
- * See https://developer.spotify.com/documentation/web-api/reference/users-profile/get-current-users-profile/
+ *
+ * @see :https://developer.spotify.com/documentation/web-api/reference/users-profile/get-current-users-profile/
  */
+@Data
 public class UserDTO {
     @Id
     private String id;
@@ -21,82 +24,10 @@ public class UserDTO {
     private String country;
     private String email;
     private String href;
-    private List<UserImage> images;
+    private List<Image> images;
     private ProductEnum product;
     private ObjectType type;
     private String uri;
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<UserImage> getImages() {
-        return images;
-    }
-
-    public void setImages(List<UserImage> images) {
-        this.images = images;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public ProductEnum getProduct() {
-        return product;
-    }
-
-    public void setProduct(ProductEnum product) {
-        this.product = product;
-    }
-
-    public ObjectType getType() {
-        return type;
-    }
-
-    public void setType(ObjectType type) {
-        this.type = type;
-    }
 
     public User toEntity() {
         return User.UserBuilder.anUser()
@@ -118,7 +49,7 @@ public class UserDTO {
         private String country;
         private String email;
         private String href;
-        private List<UserImage> images;
+        private List<Image> images;
         private ProductEnum product;
         private ObjectType type;
         private String uri;
@@ -155,7 +86,7 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTOBuilder withImages(List<UserImage> images) {
+        public UserDTOBuilder withImages(List<Image> images) {
             this.images = images;
             return this;
         }

@@ -2,13 +2,11 @@ package com.musicinfofinder.musicdetectorsrv.models.request.player;
 
 import com.musicinfofinder.musicdetectorsrv.models.request.AbstractRequestBuilder;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 
 import static com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder.HTTPS;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 public class CurrentPlayingRequestBuilder extends AbstractRequestBuilder<CurrentPlayingRequestBuilder, CurrentPlayingRequest> {
     public static final String API_SPOTIFY_HOST = "api.spotify.com";

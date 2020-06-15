@@ -2,6 +2,9 @@ package com.musicinfofinder.musicdetectorsrv.models.response.player;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Type of object in spotify
+ */
 public enum ObjectTypeEnum {
     @JsonProperty("album")
     ALBUM("album"),
@@ -20,5 +23,9 @@ public enum ObjectTypeEnum {
 
     ObjectTypeEnum(String description) {
         this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

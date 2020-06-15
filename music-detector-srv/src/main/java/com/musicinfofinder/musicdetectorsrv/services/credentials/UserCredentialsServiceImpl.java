@@ -7,6 +7,7 @@ import com.musicinfofinder.musicdetectorsrv.models.entities.credentials.UserCred
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.UserCredentialsDTO;
 import com.musicinfofinder.musicdetectorsrv.repository.IUserCredentialsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,14 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Service
+@Slf4j
 public class UserCredentialsServiceImpl implements IUserCredentialsService {
     @Autowired
     IUserCredentialsRepository userCredentialsRepository;
 
     @Override
     public UserCredentials save(String userId, String code, Token token) {
+        log.debug("Starting call to save token with userId {} and code {} and token {}", userId, code, token);
         if (isBlank(userId)) {
             throw new InvalidParameterException("User id can not be null or blank", HttpStatus.BAD_REQUEST);
         }
@@ -47,6 +50,7 @@ public class UserCredentialsServiceImpl implements IUserCredentialsService {
 
     @Override
     public UserCredentials save(UserCredentials userCredentials) {
+        log.debug("Starting call to save user credentials  with {}", userCredentials);
         if (isNull(userCredentials)) {
             throw new InvalidParameterException("Credentials can not be null", HttpStatus.BAD_REQUEST);
         }
@@ -56,8 +60,10 @@ public class UserCredentialsServiceImpl implements IUserCredentialsService {
     @Cacheable(value = "User_credentials", key = "#userId")
     @Override
     public Optional<UserCredentials> get(String userId) {
+        log.debug("Starting call to cacheable method get with userId {}", userId);
         UserCredentials userCredentials = userCredentialsRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " could not be found."));
+        log.debug("Finishing call to cacheable methor get with userId {}", userId);
         return Optional.of(userCredentials);
     }
 }

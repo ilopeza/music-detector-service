@@ -1,5 +1,8 @@
 package com.musicinfofinder.musicdetectorsrv.models.entities.credentials;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -16,6 +19,9 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  * Entity to store the credentials information for one user.
  */
 @RedisHash("User_credentials")
+@Getter
+@ToString
+@EqualsAndHashCode
 public class UserCredentials implements Serializable {
 
     @Id
@@ -28,31 +34,11 @@ public class UserCredentials implements Serializable {
     private List<String> scopes;
     private LocalDateTime expireDate;
 
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
     public void refreshToken(String token, int expiresIn) {
         this.token = token;
         this.expiresIn = expiresIn;
         this.expireDate = LocalDateTime.now()
                 .plus(Duration.ofSeconds(expiresIn));
-    }
-
-    public String getUserId() {
-        return this.userId;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public List<String> getScopes() {
-        return scopes;
-    }
-
-    public LocalDateTime getExpireDate() {
-        return expireDate;
     }
 
     public static final class AuthenticationBuilder {
