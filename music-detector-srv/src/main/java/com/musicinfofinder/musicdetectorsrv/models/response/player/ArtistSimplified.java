@@ -2,12 +2,14 @@ package com.musicinfofinder.musicdetectorsrv.models.response.player;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.musicinfofinder.musicdetectorsrv.models.response.commons.ExternalUrl;
+import lombok.Data;
 
 /**
  * To model a simplified artist
  *
  * @see:https://developer.spotify.com/documentation/web-api/reference/object-model/#artist-object-simplified
  */
+@Data
 public class ArtistSimplified {
     @JsonProperty("external_urls")
     private ExternalUrl externalUrls;    //an external URL object	Known external URLs for this artist.
