@@ -22,16 +22,16 @@ public class PlayerServiceImpl implements IPlayerService {
 
     @Override
     public CurrentPlaying getCurrentPlaying(String userId) {
-        log.debug("Starting getCurrentPlaying with userId {}", userId);
+        log.info("Starting getCurrentPlaying with userId {}", userId);
         String token = tokenService.getTokenForUser(userId);
         CurrentPlayingRequest request = CurrentPlayingRequestBuilder.getRequestBuilder(token)
                 .build();
-        log.debug("Calling /current-playing with request {}", request);
+        log.info("Calling /current-playing with request {}", request);
         HttpEntity<Object> requestEntity = new HttpEntity<>(request.getBody(), request.getHeaders());
         ResponseEntity<CurrentPlaying> responseEntity = restTemplate.exchange(request.getUri(), HttpMethod.GET,
                 requestEntity, CurrentPlaying.class);
 
-        log.debug("Finishing getCurrentPlaying with userId {}", userId);
+        log.info("Finishing getCurrentPlaying with userId {}", userId);
         return responseEntity.getBody();
     }
 }
