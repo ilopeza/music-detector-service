@@ -1,0 +1,11 @@
+spring:
+    application:
+        name: music-detector-srv
+    profiles:
+        active: development
+spring:
+    cloud:
+        config:
+            uri: http://localhost:8888
+            username: ilopeza
+            password: ironsav4694057
