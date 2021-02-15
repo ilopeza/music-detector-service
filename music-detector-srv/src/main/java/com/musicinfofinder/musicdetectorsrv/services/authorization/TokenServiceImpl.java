@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
+import com.musicinfofinder.musicdetectorsrv.config.SpotifyCredentials;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizationSpotifyRestApiException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.InvalidParameterException;
@@ -11,8 +12,6 @@ import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequest;
 import com.musicinfofinder.musicdetectorsrv.models.request.token.TokenRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.TokenDTO;
 import com.musicinfofinder.musicdetectorsrv.services.credentials.IUserCredentialsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,22 +27,24 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Service
 public class TokenServiceImpl implements ITokenService {
 
-    private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
-    @Autowired
-    private IUserCredentialsService userCredentialsService;
-    @Autowired
-    private RestTemplate restTemplate;
-    @Value("${api.spotify.client.id}")
-    private String clientId;
-    @Value("${api.spotify.client.secret}")
-    private String secretClient;
+    private static final String REDIRECT_URI = "http://localhost:8081/postAuthorize";
+    private final IUserCredentialsService userCredentialsService;
+    private final RestTemplate restTemplate;
+    private final SpotifyCredentials spotifyCredentials;
+
+    public TokenServiceImpl(IUserCredentialsService userCredentialsService, RestTemplate restTemplate, SpotifyCredentials spotifyCredentials) {
+        this.userCredentialsService = userCredentialsService;
+        this.restTemplate = restTemplate;
+        this.spotifyCredentials = spotifyCredentials;
+    }
 
     @Override
     public Token requestToken(String code) throws AuthorizeException, MalformedRequestException {
         if (isBlank(code)) {
             throw new InvalidParameterException("The application code is required to get the token.", HttpStatus.BAD_REQUEST);
         }
-        final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(clientId, secretClient)
+        final TokenRequest tokenRequest = TokenRequestBuilder.requestBuilder(spotifyCredentials.getClientId(),
+                spotifyCredentials.getClientSecret())
                 .withCode(code)
                 .withRedirectUri(REDIRECT_URI)
                 .build();
@@ -54,8 +55,7 @@ public class TokenServiceImpl implements ITokenService {
         } catch (RestClientException exception) {
             throw new AuthorizationSpotifyRestApiException(exception);
         }
-        Token body = new Token(responseEntity.getBody());
-        return body;
+        return new Token(responseEntity.getBody());
     }
 
     @Override
@@ -77,8 +77,8 @@ public class TokenServiceImpl implements ITokenService {
     /**
      * Updates the credentials for the user with the new expire date and token.
      *
-     * @param userCredentials
-     * @param refreshedToken
+     * @param userCredentials Credentials of the user to update
+     * @param refreshedToken Token
      */
     private void updateCurrentUserCredentials(UserCredentials userCredentials, Token refreshedToken) {
         userCredentials.refreshToken(refreshedToken.getAccessToken(), refreshedToken.getExpiresIn());
@@ -88,7 +88,8 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public Token requestRefreshToken(String refreshToken) throws AuthorizeException, MalformedRequestException {
-        final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(clientId, secretClient)
+        final TokenRequest tokenRequest = RefreshTokenRequestBuilder.requestBuilder(spotifyCredentials.getClientId(),
+                spotifyCredentials.getClientSecret())
                 .withRefreshToken(refreshToken)
                 .build();
 
@@ -100,8 +101,7 @@ public class TokenServiceImpl implements ITokenService {
         } catch (RestClientException exception) {
             throw new AuthorizationSpotifyRestApiException(exception);
         }
-        Token body = new Token(responseEntity.getBody());
-        return body;
+        return new Token(responseEntity.getBody());
     }
 
     @Override

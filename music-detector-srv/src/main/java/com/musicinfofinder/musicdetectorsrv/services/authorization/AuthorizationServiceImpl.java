@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
+import com.musicinfofinder.musicdetectorsrv.config.SpotifyCredentials;
 import com.musicinfofinder.musicdetectorsrv.enums.ResponseTypeEnum;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.exceptions.MalformedRequestException;
@@ -7,35 +8,38 @@ import com.musicinfofinder.musicdetectorsrv.models.request.authorization.Authori
 import com.musicinfofinder.musicdetectorsrv.models.request.authorization.AuthorizeRequestBuilder;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+
+import static java.util.Arrays.asList;
 
 @Service
 @Slf4j
 public class AuthorizationServiceImpl implements IAuthorizationService {
 
-    private final static String REDIRECT_URI = "http://localhost:8081/postAuthorize";
-    @Autowired
-    ITokenService tokenService;
-    @Value("${api.spotify.client.id}")
-    private String clientId;
+    private static final String REDIRECT_URI = "http://localhost:8081/postAuthorize";
+    private final ITokenService tokenService;
+    private final SpotifyCredentials spotifyCredentials;
+
+    public AuthorizationServiceImpl(ITokenService tokenService, SpotifyCredentials spotifyCredentials) {
+        this.tokenService = tokenService;
+        this.spotifyCredentials = spotifyCredentials;
+    }
 
     @Override
     public void authorize() throws AuthorizeException, MalformedRequestException {
         //TODO: GENERATE AN SHA TO ADD AS STATE AND THEN USE IT TO PREVENT ATTACKS
         final AuthorizeRequest request = AuthorizeRequestBuilder
                 .requestBuilder()
-                .withClientId(clientId)
+                .withClientId(spotifyCredentials.getClientId())
                 .withRedirectUri(REDIRECT_URI)
                 .withResponseType(ResponseTypeEnum.CODE.getName())
-                .withScopes(Arrays.asList("user-read-private", "user-read-email", "user-read-currently-playing",
+                .withScopes(asList("user-read-private",
+                        "user-read-email", "user-read-currently-playing",
                         "user-read-playback-state"))
                 .withShowDialog(false)
                 //.withState(STATE)
@@ -48,7 +52,7 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
     /**
      * Open the acceptance dialog.
      *
-     * @param url
+     * @param url url to open authorization dialog
      * @throws AuthorizeException if the browser cannot be opened.
      */
     //TODO: IS THERE A BETTER WAY TO OPEN THE BROWSER? MULTIPLATFORM AND WITH NO FAILURES?
@@ -64,12 +68,12 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
         Runtime rt = Runtime.getRuntime();
         try {
             final String urlToOpen = url.toString();
-            if (os.indexOf("win") >= 0) {
+            if (os.contains("win")) {
                 // this doesn't support showing urls in the form of "page.html#nameLink"
                 rt.exec("rundll32 url.dll,FileProtocolHandler " + urlToOpen);
-            } else if (os.indexOf("mac") >= 0) {
+            } else if (os.contains("mac")) {
                 rt.exec("open " + urlToOpen);
-            } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+            } else if (os.contains("nix") || os.contains("nux")) {
                 openInUnixOS(urlToOpen, rt);
             } else {
                 throw new AuthorizeException("Cannot identify OS");
@@ -85,9 +89,9 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
         String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
                 "netscape", "opera", "links", "lynx", "chrome"};
         // Build a command string which looks like "browser1 "url" || browser2 "url" ||..."
-        StringBuffer cmd = new StringBuffer();
+        StringBuilder cmd = new StringBuilder();
         for (int i = 0; i < browsers.length; i++) {
-            cmd.append((i == 0 ? "" : " || ") + browsers[i] + " \"" + url + "\" ");
+            cmd.append(i == 0 ? "" : " || ").append(browsers[i]).append(" \"").append(url).append("\" ");
         }
         rt.exec(new String[]{"sh", "-c", cmd.toString()});
     }
@@ -99,10 +103,9 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
             log.error("User not authorized with credentials {}", response);
             throw new AuthorizeException("The user has not authorized the application", HttpStatus.UNAUTHORIZED);
         }
-        /**if (!response.isValidState(STATE)) {
-         throw new AuthorizeException("The state code is not recognized");
-         }**/
-
+//        *if (!response.isValidState(STATE)) {
+//         throw new AuthorizeException("The state code is not recognized");
+//         }
         String code = response.getCode();
         log.info("Response code is {}", code);
         return tokenService.requestToken(code).getAccessToken();
