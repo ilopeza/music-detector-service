@@ -1,5 +1,6 @@
 package com.musicinfofinder.musicdetectorsrv.services.authorization;
 
+import com.musicinfofinder.musicdetectorsrv.config.SpotifyCredentials;
 import com.musicinfofinder.musicdetectorsrv.exceptions.AuthorizeException;
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.AuthorizationDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,16 +16,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthorizationServiceImplTest {
 
-    private static final String CLIENT_ID = "client_id";
+    /*private static final String CLIENT_ID = "client_id";
     private static final String CLIENT_SECRET = "client_secret";
-    private static final String URI_REQUEST = "http://localhost:8080";
+    private static final String URI_REQUEST = "http://localhost:8080";*/
     IAuthorizationService authorizationService;
     @Mock
     AuthorizationDTO authorizationDTO;
+    @Mock
+    SpotifyCredentials spotifyCredentials;
+    @Mock
+    TokenServiceImpl iTokenService;
 
     @BeforeEach
     void initMocks() {
-        authorizationService = new AuthorizationServiceImpl();
+        authorizationService = new AuthorizationServiceImpl(iTokenService, spotifyCredentials);
         MockitoAnnotations.initMocks(this);
     }
 

@@ -9,26 +9,30 @@ import com.musicinfofinder.musicdetectorsrv.services.authorization.IAuthorizatio
 import com.musicinfofinder.musicdetectorsrv.services.authorization.ITokenService;
 import com.musicinfofinder.musicdetectorsrv.services.credentials.IUserCredentialsService;
 import com.musicinfofinder.musicdetectorsrv.services.user.IUserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 public class AuthorizationController {
-    private final static Logger logger = LogManager.getLogger(AuthorizationController.class);
 
-    @Autowired
-    private IAuthorizationService authorizationService;
-    @Autowired
-    private ITokenService tokenService;
-    @Autowired
-    private IUserCredentialsService userCredentialsService;
-    @Autowired
-    private IUserService userService;
+    private final IAuthorizationService authorizationService;
+    private final ITokenService tokenService;
+    private final IUserCredentialsService userCredentialsService;
+    private final IUserService userService;
+
+    public AuthorizationController(IAuthorizationService authorizationService,
+                                   ITokenService tokenService,
+                                   IUserCredentialsService userCredentialsService,
+                                   IUserService userService) {
+        this.authorizationService = authorizationService;
+        this.tokenService = tokenService;
+        this.userCredentialsService = userCredentialsService;
+        this.userService = userService;
+    }
 
     @RequestMapping("/authorize")
     public void authorize() {
