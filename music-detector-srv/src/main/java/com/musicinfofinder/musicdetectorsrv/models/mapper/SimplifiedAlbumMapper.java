@@ -2,11 +2,12 @@ package com.musicinfofinder.musicdetectorsrv.models.mapper;
 
 import com.musicinfofinder.musicdetectorsrv.models.response.dto.AlbumDTO;
 import com.musicinfofinder.musicdetectorsrv.models.response.player.AlbumSimplified;
-import lombok.var;
 
 import java.util.stream.Collectors;
 
 public class SimplifiedAlbumMapper {
+
+    public SimplifiedAlbumMapper() {}
 
     public static AlbumDTO toAlbumDTO(AlbumSimplified album) {
         var artistDTOS = album.getArtists().stream()
